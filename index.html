@@ -829,10 +829,13 @@ window.savePerson = function() {
     showToast('A person with this name already exists'); return;
   }
   const colorIdx = people.length % 10;
-  people.unshift({ id: uid(), name, colorIdx, createdAt: Date.now() });
+  const newPerson = { id: uid(), name, colorIdx, createdAt: Date.now() };
+  people.unshift(newPerson);
   scheduleSave(); render();
   closeModal();
-  showToast(`Added ${name} ✓`);
+  showToast(`Added ${name} ✓ — now add a transaction`);
+  // Auto-open the new person's detail so transaction buttons are immediately visible
+  setTimeout(() => openPerson(newPerson.id), 200);
 };
 
 window.askDeletePerson = function() {
@@ -998,10 +1001,13 @@ window.saveGroup = function() {
   const chips = document.querySelectorAll('.member-chip.active');
   const memberIds = Array.from(chips).map(c => c.dataset.pid);
   if (memberIds.length === 0) { showToast('Select at least one member'); return; }
-  groups.unshift({ id: uid(), name, memberIds, includeMe: true, createdAt: Date.now() });
+  const newGroup = { id: uid(), name, memberIds, includeMe: true, createdAt: Date.now() };
+  groups.unshift(newGroup);
   scheduleSave(); render();
   closeModal();
   showToast(`Group "${name}" created ✓`);
+  // Auto-open so user sees "Add Expense" button
+  setTimeout(() => openGroup(newGroup.id), 200);
 };
 
 window.askDeleteGroup = function() {
@@ -1158,8 +1164,8 @@ function renderPeopleList() {
   withBal.sort((a, b) => Math.abs(b.b) - Math.abs(a.b));
   list.innerHTML = withBal.map(({ p, b }) => {
     const cls = b > 0 ? 'pos' : (b < 0 ? 'neg' : 'zero');
-    const label = b > 0 ? 'owes you' : (b < 0 ? 'you owe' : 'settled');
-    const amt = b === 0 ? '₹0' : (b > 0 ? '+' : '-') + formatINR(b);
+    const label = b > 0 ? 'owes you' : (b < 0 ? 'you owe' : 'tap to add transactions');
+    const amt = b === 0 ? '—' : (b > 0 ? '+' : '-') + formatINR(b);
     return `<div class="list-card" onclick="openPerson('${p.id}')">
       <div class="list-icon avatar-color-${p.colorIdx || 0}">${personInitial(p.name)}</div>
       <div class="list-info">
@@ -1167,6 +1173,7 @@ function renderPeopleList() {
         <div class="list-meta">${label}</div>
       </div>
       <div class="list-amt ${cls}">${amt}</div>
+      <div style="color:var(--dim);font-size:20px;margin-left:4px;">›</div>
     </div>`;
   }).join('');
 }
@@ -1192,6 +1199,7 @@ function renderGroupsList() {
         <div class="list-meta">${g.memberIds.length + 1} members · ${txnCount} expense${txnCount !== 1 ? 's' : ''}</div>
       </div>
       <div class="list-amt zero">${formatINR(total)}</div>
+      <div style="color:var(--dim);font-size:20px;margin-left:4px;">›</div>
     </div>`;
   }).join('');
 }
