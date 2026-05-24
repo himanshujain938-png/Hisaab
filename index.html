@@ -267,6 +267,29 @@
     .login-error { margin-top: 16px; padding: 10px 14px; background: rgba(255,107,107,0.1); border: 1px solid rgba(255,107,107,0.3); border-radius: 10px; color: var(--red); font-size: 12px; text-align: center; max-width: 320px; display: none; word-break: break-word; }
     .login-error.show { display: block; }
 
+    /* Guest mode styles */
+    .guest-btn { width: 100%; max-width: 320px; padding: 12px 18px; border: 1px solid var(--border); border-radius: 14px; background: transparent; color: var(--text); font-size: 14px; font-weight: 600; cursor: pointer; font-family: inherit; margin-top: 10px; }
+    .guest-btn:hover { background: var(--surface); }
+    .sync-status.guest { color: var(--muted); }
+    .guest-banner {
+      background: rgba(245,158,11,0.08);
+      border: 1px solid rgba(245,158,11,0.25);
+      border-radius: 12px; padding: 10px 14px; margin-bottom: 16px;
+      font-size: 12px; color: var(--amber);
+      display: flex; align-items: center; gap: 10px;
+    }
+    .guest-banner .guest-banner-text { flex: 1; line-height: 1.4; }
+    .guest-banner button {
+      background: var(--amber); color: #1f1f1f;
+      border: none; border-radius: 8px;
+      padding: 6px 10px; font-size: 11px; font-weight: 700;
+      cursor: pointer; font-family: inherit; flex-shrink: 0;
+    }
+    .guest-banner .close-x {
+      background: none; color: var(--dim);
+      padding: 4px 6px; font-weight: 600;
+    }
+
     #appRoot.hidden { display: none; }
     .boot-screen { position: fixed; inset: 0; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1001; }
     .boot-screen.hidden { display: none; }
@@ -309,6 +332,7 @@
     <svg class="google-icon" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.1 29.3 4 24 4 13 4 4 13 4 24s9 20 20 20 20-9 20-20c0-1.3-.1-2.3-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.3 35.3 26.8 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.3-4.2 5.7l6.2 5.2C40.9 35.4 44 30.1 44 24c0-1.3-.1-2.3-.4-3.5z"/></svg>
     <span id="signInLabel">Google se Sign In karein</span>
   </button>
+  <button class="guest-btn" id="guestBtn" onclick="continueAsGuest()">Guest ke roop mein chalao</button>
   <div class="login-foot">Aapka data private hai. Sirf aap dekh sakte hain.</div>
   <div class="login-error" id="loginError"></div>
 </div>
@@ -325,13 +349,20 @@
         <div class="avatar" id="userAvatar">U</div>
         <div class="user-menu" id="userMenu">
           <div class="menu-info" id="userEmail">user@gmail.com</div>
+          <div class="menu-item" id="menuSignIn" onclick="signInFromGuest()" style="display:none;color:var(--green);">☁️ Sync ke liye Sign In karein</div>
           <div class="menu-item" onclick="exportBackup()">💾 Backup Export</div>
           <div class="menu-item" onclick="triggerImport()">📂 Backup Import</div>
-          <div class="menu-item" onclick="signOutUser()" style="color: var(--red);">🚪 Sign Out</div>
+          <div class="menu-item" onclick="signOutUser()" style="color: var(--red);" id="menuSignOut">🚪 Sign Out</div>
         </div>
       </div>
     </div>
     <p class="subtitle">Lena dena, sab clear</p>
+
+    <div class="guest-banner" id="guestBanner" style="display:none">
+      <span class="guest-banner-text">👤 <strong>Guest mode</strong> — data sirf is phone par hai. Sab devices pe sync ke liye Sign In karo.</span>
+      <button onclick="signInFromGuest()">Sign In</button>
+      <button class="close-x" onclick="dismissGuestBanner()">✕</button>
+    </div>
 
     <input type="file" id="importFile" accept=".json" onchange="importBackup(event)" style="display:none;" />
 
@@ -472,6 +503,7 @@ let groups = [];      // { id, name, memberIds, includeMe, createdAt }
 let transactions = []; // see model in comments
 
 let currentUser = null;
+let isGuestMode = false;
 let unsubscribeSnapshot = null;
 let saveTimer = null;
 let firstSnapshotReceived = false;
@@ -596,8 +628,21 @@ window.addEventListener('firebase-ready', () => {
   const fb = window.__firebase;
   fb.getRedirectResult(fb.auth).catch(err => console.warn('Redirect result:', err));
   fb.onAuthStateChanged(fb.auth, (user) => {
-    if (user) { currentUser = user; onUserSignedIn(user); }
-    else { currentUser = null; onUserSignedOut(); }
+    if (user) {
+      currentUser = user;
+      isGuestMode = false;
+      localStorage.removeItem('hisaab_guest_mode');
+      onUserSignedIn(user);
+    } else {
+      currentUser = null;
+      if (localStorage.getItem('hisaab_guest_mode') === '1') {
+        isGuestMode = true;
+        enterGuestMode();
+      } else {
+        isGuestMode = false;
+        onUserSignedOut();
+      }
+    }
   });
 });
 
@@ -605,22 +650,75 @@ function onUserSignedIn(user) {
   document.getElementById('bootScreen').classList.add('hidden');
   document.getElementById('loginOverlay').classList.add('hidden');
   document.getElementById('appRoot').classList.remove('hidden');
+  document.getElementById('guestBanner').style.display = 'none';
+  document.getElementById('menuSignIn').style.display = 'none';
+  document.getElementById('menuSignOut').textContent = '🚪 Sign Out';
 
   document.getElementById('userEmail').textContent = user.email || user.displayName || 'Signed in';
   const avatarEl = document.getElementById('userAvatar');
   if (user.photoURL) avatarEl.innerHTML = `<img src="${user.photoURL}" alt="" referrerpolicy="no-referrer" />`;
-  else avatarEl.textContent = (user.displayName || user.email || 'U').charAt(0).toUpperCase();
+  else { avatarEl.textContent = (user.displayName || user.email || 'U').charAt(0).toUpperCase(); avatarEl.style.background = ''; }
 
-  setSyncStatus('syncing', '⟳ Loading…');
+  setSyncStatus('syncing', '⟳ Load ho raha…');
   firstSnapshotReceived = false;
   startCloudSync(user.uid);
   render();
 }
 
+window.continueAsGuest = function() {
+  localStorage.setItem('hisaab_guest_mode', '1');
+  isGuestMode = true;
+  enterGuestMode();
+  showToast('Guest mode chalu — data is phone par hi rahega');
+};
+
+function enterGuestMode() {
+  document.getElementById('bootScreen').classList.add('hidden');
+  document.getElementById('loginOverlay').classList.add('hidden');
+  document.getElementById('appRoot').classList.remove('hidden');
+
+  if (localStorage.getItem('hisaab_guest_banner_dismissed') !== '1') {
+    document.getElementById('guestBanner').style.display = 'flex';
+  }
+  document.getElementById('menuSignIn').style.display = 'flex';
+  document.getElementById('menuSignOut').textContent = '🔁 Sign In pe switch karo';
+
+  document.getElementById('userEmail').textContent = 'Guest (local only)';
+  document.getElementById('userAvatar').innerHTML = '';
+  document.getElementById('userAvatar').textContent = '👤';
+  document.getElementById('userAvatar').style.background = 'var(--border)';
+
+  setSyncStatus('guest', '👤 Guest');
+
+  // Load from localStorage
+  try {
+    people = JSON.parse(localStorage.getItem('hisaab_people') || '[]');
+    groups = JSON.parse(localStorage.getItem('hisaab_groups') || '[]');
+    transactions = JSON.parse(localStorage.getItem('hisaab_transactions') || '[]');
+  } catch (e) {
+    people = []; groups = []; transactions = [];
+  }
+
+  render();
+}
+
+window.signInFromGuest = function() {
+  document.getElementById('userMenu').classList.remove('open');
+  localStorage.removeItem('hisaab_guest_mode');
+  signInWithGoogle();
+};
+
+window.dismissGuestBanner = function() {
+  document.getElementById('guestBanner').style.display = 'none';
+  localStorage.setItem('hisaab_guest_banner_dismissed', '1');
+};
+
 function onUserSignedOut() {
   document.getElementById('bootScreen').classList.add('hidden');
   document.getElementById('appRoot').classList.add('hidden');
   document.getElementById('loginOverlay').classList.remove('hidden');
+  const av = document.getElementById('userAvatar');
+  if (av) av.style.background = '';
   const btn = document.getElementById('googleSignInBtn'); if (btn) btn.disabled = false;
   const label = document.getElementById('signInLabel'); if (label) label.textContent = 'Google se Sign In karein';
   if (unsubscribeSnapshot) { unsubscribeSnapshot(); unsubscribeSnapshot = null; }
@@ -649,6 +747,17 @@ window.signInWithGoogle = async function() {
 };
 
 window.signOutUser = async function() {
+  document.getElementById('userMenu').classList.remove('open');
+
+  if (isGuestMode) {
+    // Switch from guest to sign-in flow — keep local data so it can migrate on sign-in
+    localStorage.removeItem('hisaab_guest_mode');
+    isGuestMode = false;
+    document.getElementById('appRoot').classList.add('hidden');
+    document.getElementById('loginOverlay').classList.remove('hidden');
+    return;
+  }
+
   try { await window.__firebase.signOut(window.__firebase.auth);
     people = []; groups = []; transactions = []; showToast('Sign out ho gaye');
   } catch (err) { showToast('Sign out fail ho gaya'); }
@@ -661,8 +770,14 @@ function setSyncStatus(state, label) {
   el.textContent = label;
 }
 
-window.addEventListener('online', () => { if (currentUser) setSyncStatus('syncing', '⟳ Connect ho raha…'); });
-window.addEventListener('offline', () => setSyncStatus('offline', '⚠ Offline'));
+window.addEventListener('online', () => {
+  if (isGuestMode) { setSyncStatus('guest', '👤 Guest'); return; }
+  if (currentUser) setSyncStatus('syncing', '⟳ Connect ho raha…');
+});
+window.addEventListener('offline', () => {
+  if (isGuestMode) { setSyncStatus('guest', '👤 Guest'); return; }
+  setSyncStatus('offline', '⚠ Offline');
+});
 
 function startCloudSync(uid) {
   const fb = window.__firebase;
@@ -683,11 +798,28 @@ function startCloudSync(uid) {
     } else {
       if (!firstSnapshotReceived) {
         firstSnapshotReceived = true;
-        // Empty cloud doc — initialise empty
-        people = []; groups = []; transactions = [];
-        pushToCloud();
-        render();
-        showToast('Welcome! Pehla banda add karo 👥');
+        // No cloud doc yet — first-time sign-in. Check if user had guest data locally and migrate it.
+        let localPeople = [], localGroups = [], localTxns = [];
+        try {
+          localPeople = JSON.parse(localStorage.getItem('hisaab_people') || '[]');
+          localGroups = JSON.parse(localStorage.getItem('hisaab_groups') || '[]');
+          localTxns = JSON.parse(localStorage.getItem('hisaab_transactions') || '[]');
+        } catch (e) {}
+
+        if (Array.isArray(localPeople) && Array.isArray(localGroups) && Array.isArray(localTxns) &&
+            (localPeople.length > 0 || localTxns.length > 0)) {
+          // Migrate guest data
+          people = localPeople; groups = localGroups; transactions = localTxns;
+          pushToCloud();
+          render();
+          showToast(`Migrate ho gaya: ${localPeople.length} log, ${localTxns.length} transaction ✓`);
+        } else {
+          // Truly new user
+          people = []; groups = []; transactions = [];
+          pushToCloud();
+          render();
+          showToast('Welcome! Pehla banda add karo 👥');
+        }
       }
     }
   }, (err) => {
@@ -698,6 +830,10 @@ function startCloudSync(uid) {
 }
 
 async function pushToCloud() {
+  if (isGuestMode) {
+    setSyncStatus('guest', '👤 Guest');
+    return;
+  }
   if (!currentUser) return;
   const fb = window.__firebase;
   setSyncStatus('syncing', '⟳ Save ho raha…');
@@ -718,6 +854,12 @@ function scheduleSave() {
     localStorage.setItem('hisaab_groups', JSON.stringify(groups));
     localStorage.setItem('hisaab_transactions', JSON.stringify(transactions));
   } catch (e) {}
+
+  if (isGuestMode) {
+    setSyncStatus('guest', '👤 Guest');
+    return;
+  }
+
   if (saveTimer) clearTimeout(saveTimer);
   saveTimer = setTimeout(pushToCloud, 350);
 }
@@ -1425,12 +1567,18 @@ function render() {
 // Boot timeout
 setTimeout(() => {
   const boot = document.getElementById('bootScreen');
-  if (boot && !boot.classList.contains('hidden') && !currentUser) {
+  if (boot && !boot.classList.contains('hidden') && !currentUser && !isGuestMode) {
+    // If user previously chose guest mode, enter it directly
+    if (localStorage.getItem('hisaab_guest_mode') === '1') {
+      isGuestMode = true;
+      enterGuestMode();
+      return;
+    }
     boot.classList.add('hidden');
     document.getElementById('loginOverlay').classList.remove('hidden');
     if (!window.__firebase) {
       const err = document.getElementById('loginError');
-      err.textContent = 'Network slow hai. Internet connect karke reload karo.';
+      err.textContent = 'Network slow hai. Internet connect karke reload karo. (Ya guest mode use karo.)';
       err.classList.add('show');
     }
   }
