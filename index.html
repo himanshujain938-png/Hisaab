@@ -290,7 +290,7 @@
 
 <div class="boot-screen" id="bootScreen">
   <div class="boot-logo">📒</div>
-  <div class="boot-text">Loading Hisaab…</div>
+  <div class="boot-text">Hisaab load ho raha hai…</div>
 </div>
 
 <div class="login-overlay hidden" id="loginOverlay">
@@ -299,17 +299,17 @@
   <div class="login-tag">Lena dena, sab clear</div>
 
   <div class="login-features">
-    <div class="login-feature"><span class="login-feature-icon">👥</span><span>Track who owes whom with friends & family</span></div>
-    <div class="login-feature"><span class="login-feature-icon">🎫</span><span>Split trip & event bills automatically</span></div>
-    <div class="login-feature"><span class="login-feature-icon">📤</span><span>Share clean summaries on WhatsApp</span></div>
-    <div class="login-feature"><span class="login-feature-icon">☁️</span><span>Synced across all your devices</span></div>
+    <div class="login-feature"><span class="login-feature-icon">👥</span><span>Friends aur family ka hisaab rakho</span></div>
+    <div class="login-feature"><span class="login-feature-icon">🎫</span><span>Trip aur party ke bills auto-split karo</span></div>
+    <div class="login-feature"><span class="login-feature-icon">📤</span><span>WhatsApp pe summary share karo</span></div>
+    <div class="login-feature"><span class="login-feature-icon">☁️</span><span>Sab devices pe sync</span></div>
   </div>
 
   <button class="google-btn" id="googleSignInBtn" onclick="signInWithGoogle()">
     <svg class="google-icon" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.1 29.3 4 24 4 13 4 4 13 4 24s9 20 20 20 20-9 20-20c0-1.3-.1-2.3-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.3 35.3 26.8 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.3-4.2 5.7l6.2 5.2C40.9 35.4 44 30.1 44 24c0-1.3-.1-2.3-.4-3.5z"/></svg>
-    <span id="signInLabel">Sign in with Google</span>
+    <span id="signInLabel">Google se Sign In karein</span>
   </button>
-  <div class="login-foot">Your data is private. Only you can see it.</div>
+  <div class="login-foot">Aapka data private hai. Sirf aap dekh sakte hain.</div>
   <div class="login-error" id="loginError"></div>
 </div>
 
@@ -321,13 +321,13 @@
     <div class="header-bar">
       <h1>📒 Hisaab</h1>
       <div class="user-chip" id="userChip" onclick="toggleUserMenu(event)">
-        <span class="sync-status" id="syncStatus">☁ Synced</span>
+        <span class="sync-status" id="syncStatus">☁ Sync ho gaya</span>
         <div class="avatar" id="userAvatar">U</div>
         <div class="user-menu" id="userMenu">
           <div class="menu-info" id="userEmail">user@gmail.com</div>
-          <div class="menu-item" onclick="exportBackup()">💾 Export Backup</div>
-          <div class="menu-item" onclick="triggerImport()">📂 Import Backup</div>
-          <div class="menu-item" onclick="signOutUser()" style="color: var(--red);">🚪 Sign out</div>
+          <div class="menu-item" onclick="exportBackup()">💾 Backup Export</div>
+          <div class="menu-item" onclick="triggerImport()">📂 Backup Import</div>
+          <div class="menu-item" onclick="signOutUser()" style="color: var(--red);">🚪 Sign Out</div>
         </div>
       </div>
     </div>
@@ -339,11 +339,11 @@
     <div class="dash-card" id="dashCard">
       <div class="dash-row">
         <div class="dash-cell">
-          <div class="dash-label">You'll Get</div>
+          <div class="dash-label">Aapko Milne Hai</div>
           <div class="dash-val pos" id="totalGet">₹0</div>
         </div>
         <div class="dash-cell">
-          <div class="dash-label">You'll Give</div>
+          <div class="dash-label">Aapko Dene Hai</div>
           <div class="dash-val neg" id="totalGive">₹0</div>
         </div>
       </div>
@@ -355,15 +355,15 @@
 
     <!-- Tabs -->
     <div class="tabs">
-      <button class="tab-btn active" id="tab-people" onclick="setMainTab('people')">👥 People</button>
+      <button class="tab-btn active" id="tab-people" onclick="setMainTab('people')">👥 Log</button>
       <button class="tab-btn" id="tab-groups" onclick="setMainTab('groups')">🎫 Groups</button>
     </div>
 
     <!-- People view -->
     <div id="peopleView">
       <div class="section-head">
-        <div class="section-title">All People</div>
-        <button class="icon-btn" onclick="openAddPerson()" title="Add Person">+</button>
+        <div class="section-title">Saare Log</div>
+        <button class="icon-btn" onclick="openAddPerson()" title="Banda Add Karo">+</button>
       </div>
       <div id="peopleList"></div>
     </div>
@@ -372,42 +372,42 @@
     <div id="groupsView" style="display:none">
       <div class="section-head">
         <div class="section-title">Groups & Trips</div>
-        <button class="icon-btn" onclick="openAddGroup()" title="Add Group">+</button>
+        <button class="icon-btn" onclick="openAddGroup()" title="Group Add Karo">+</button>
       </div>
       <div id="groupsList"></div>
     </div>
 
     <!-- Person Detail view -->
     <div id="personDetailView" style="display:none">
-      <button class="detail-back" onclick="closeDetail()">‹ Back</button>
+      <button class="detail-back" onclick="closeDetail()">‹ Wapas</button>
       <div class="detail-header">
         <div class="detail-name" id="personDetailName">Name</div>
         <div class="detail-bal" id="personDetailBal">₹0</div>
         <div class="detail-summary" id="personDetailSummary"></div>
         <div class="detail-actions">
-          <button class="detail-action primary" onclick="openAddTxn('lent')">💸 You Lent</button>
-          <button class="detail-action" onclick="openAddTxn('borrowed')">📥 You Borrowed</button>
+          <button class="detail-action primary" onclick="openAddTxn('lent')">💸 Tumne Diye</button>
+          <button class="detail-action" onclick="openAddTxn('borrowed')">📥 Tumne Liye</button>
         </div>
         <div class="detail-actions" style="margin-top:8px;">
-          <button class="detail-action" onclick="openSettle()">✅ Settle</button>
+          <button class="detail-action" onclick="openSettle()">✅ Settle Karo</button>
           <button class="detail-action" onclick="shareSummary()">📤 Share</button>
         </div>
       </div>
       <div class="section-head">
-        <div class="section-title">Transaction History</div>
+        <div class="section-title">Transactions ka History</div>
       </div>
       <div id="personTxnList"></div>
-      <button class="danger-btn" onclick="askDeletePerson()" style="margin-top:20px;">🗑 Delete this person</button>
+      <button class="danger-btn" onclick="askDeletePerson()" style="margin-top:20px;">🗑 Is bande ko delete karo</button>
     </div>
 
     <!-- Group Detail view -->
     <div id="groupDetailView" style="display:none">
-      <button class="detail-back" onclick="closeDetail()">‹ Back</button>
+      <button class="detail-back" onclick="closeDetail()">‹ Wapas</button>
       <div class="detail-header">
         <div class="detail-name" id="groupDetailName">Group</div>
         <div class="detail-summary" id="groupDetailMembers" style="margin-top:8px;"></div>
         <div class="detail-actions" style="margin-top:14px;">
-          <button class="detail-action primary" onclick="openAddSplit()">💰 Add Expense</button>
+          <button class="detail-action primary" onclick="openAddSplit()">💰 Kharcha Add Karo</button>
           <button class="detail-action" onclick="shareGroupSummary()">📤 Share</button>
         </div>
       </div>
@@ -418,10 +418,10 @@
       <div id="settlementPlan"></div>
 
       <div class="section-head" style="margin-top:16px;">
-        <div class="section-title">Expenses</div>
+        <div class="section-title">Saare Kharche</div>
       </div>
       <div id="groupTxnList"></div>
-      <button class="danger-btn" onclick="askDeleteGroup()" style="margin-top:20px;">🗑 Delete this group</button>
+      <button class="danger-btn" onclick="askDeleteGroup()" style="margin-top:20px;">🗑 Is group ko delete karo</button>
     </div>
   </div>
 </div>
@@ -622,7 +622,7 @@ function onUserSignedOut() {
   document.getElementById('appRoot').classList.add('hidden');
   document.getElementById('loginOverlay').classList.remove('hidden');
   const btn = document.getElementById('googleSignInBtn'); if (btn) btn.disabled = false;
-  const label = document.getElementById('signInLabel'); if (label) label.textContent = 'Sign in with Google';
+  const label = document.getElementById('signInLabel'); if (label) label.textContent = 'Google se Sign In karein';
   if (unsubscribeSnapshot) { unsubscribeSnapshot(); unsubscribeSnapshot = null; }
 }
 
@@ -632,26 +632,26 @@ window.signInWithGoogle = async function() {
   const label = document.getElementById('signInLabel');
   const errEl = document.getElementById('loginError');
   errEl.classList.remove('show');
-  btn.disabled = true; label.textContent = 'Signing in…';
+  btn.disabled = true; label.textContent = 'Sign in ho raha hai…';
   const provider = new fb.GoogleAuthProvider();
   try {
     await fb.signInWithPopup(fb.auth, provider);
   } catch (err) {
     if (['auth/popup-blocked','auth/popup-closed-by-user','auth/cancelled-popup-request','auth/operation-not-supported-in-this-environment','auth/web-storage-unsupported'].includes(err.code)) {
       try { await fb.signInWithRedirect(fb.auth, provider); return; }
-      catch (e2) { errEl.textContent = 'Sign-in failed: ' + (e2.message || e2.code); errEl.classList.add('show'); }
+      catch (e2) { errEl.textContent = 'Sign-in fail ho gaya: ' + (e2.message || e2.code); errEl.classList.add('show'); }
     } else {
-      errEl.textContent = 'Sign-in failed: ' + (err.message || err.code);
+      errEl.textContent = 'Sign-in fail ho gaya: ' + (err.message || err.code);
       errEl.classList.add('show');
     }
-    btn.disabled = false; label.textContent = 'Sign in with Google';
+    btn.disabled = false; label.textContent = 'Google se Sign In karein';
   }
 };
 
 window.signOutUser = async function() {
   try { await window.__firebase.signOut(window.__firebase.auth);
-    people = []; groups = []; transactions = []; showToast('Signed out');
-  } catch (err) { showToast('Sign out failed'); }
+    people = []; groups = []; transactions = []; showToast('Sign out ho gaye');
+  } catch (err) { showToast('Sign out fail ho gaya'); }
 };
 
 function setSyncStatus(state, label) {
@@ -661,7 +661,7 @@ function setSyncStatus(state, label) {
   el.textContent = label;
 }
 
-window.addEventListener('online', () => { if (currentUser) setSyncStatus('syncing', '⟳ Reconnecting…'); });
+window.addEventListener('online', () => { if (currentUser) setSyncStatus('syncing', '⟳ Connect ho raha…'); });
 window.addEventListener('offline', () => setSyncStatus('offline', '⚠ Offline'));
 
 function startCloudSync(uid) {
@@ -678,8 +678,8 @@ function startCloudSync(uid) {
       firstSnapshotReceived = true;
       render();
       if (!navigator.onLine) setSyncStatus('offline', '⚠ Offline');
-      else if (pending) setSyncStatus('syncing', '⟳ Syncing…');
-      else setSyncStatus('', '☁ Synced');
+      else if (pending) setSyncStatus('syncing', '⟳ Sync ho raha…');
+      else setSyncStatus('', '☁ Sync ho gaya');
     } else {
       if (!firstSnapshotReceived) {
         firstSnapshotReceived = true;
@@ -687,7 +687,7 @@ function startCloudSync(uid) {
         people = []; groups = []; transactions = [];
         pushToCloud();
         render();
-        showToast('Welcome! Add your first person 👥');
+        showToast('Welcome! Pehla banda add karo 👥');
       }
     }
   }, (err) => {
@@ -700,15 +700,15 @@ function startCloudSync(uid) {
 async function pushToCloud() {
   if (!currentUser) return;
   const fb = window.__firebase;
-  setSyncStatus('syncing', '⟳ Saving…');
+  setSyncStatus('syncing', '⟳ Save ho raha…');
   try {
     const ref = fb.doc(fb.db, 'hisaab_users', currentUser.uid);
     await fb.setDoc(ref, { people, groups, transactions, updatedAt: fb.serverTimestamp(), version: 1 }, { merge: true });
-    setSyncStatus(navigator.onLine ? '' : 'offline', navigator.onLine ? '☁ Synced' : '⚠ Offline (queued)');
+    setSyncStatus(navigator.onLine ? '' : 'offline', navigator.onLine ? '☁ Sync ho gaya' : '⚠ Offline (queued)');
   } catch (err) {
     console.error('Push error:', err);
     setSyncStatus('error', '⚠ Save error');
-    showToast('Save failed: ' + (err.code || err.message));
+    showToast('Save fail: ' + (err.code || err.message));
   }
 }
 
@@ -736,7 +736,7 @@ window.exportBackup = function() {
   a.download = `hisaab-backup-${todayStr()}.json`;
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-  showToast('Backup exported ✓');
+  showToast('Backup export ho gaya ✓');
 };
 
 window.importBackup = function(event) {
@@ -750,8 +750,8 @@ window.importBackup = function(event) {
       groups = data.groups || [];
       transactions = data.transactions;
       scheduleSave(); render();
-      showToast('Backup restored ✓');
-    } catch (err) { showToast('Invalid backup file'); }
+      showToast('Backup restore ho gaya ✓');
+    } catch (err) { showToast('Galat backup file'); }
   };
   reader.readAsText(file);
   event.target.value = '';
@@ -812,11 +812,11 @@ window.closeModalIfBack = function(e) { if (e.target.id === 'modalBack') closeMo
 // ===== Add Person =====
 window.openAddPerson = function() {
   openModal(`
-    <div class="modal-title">Add Person</div>
-    <div class="modal-sub">A friend, family member, or roommate</div>
-    <label class="form-label">Name</label>
-    <input class="form-input" id="newPersonName" placeholder="e.g. Ravi" autofocus />
-    <button class="submit-btn" onclick="savePerson()">Add Person</button>
+    <div class="modal-title">Banda Add Karo</div>
+    <div class="modal-sub">Friend, family ya roommate</div>
+    <label class="form-label">Naam</label>
+    <input class="form-input" id="newPersonName" placeholder="jaise: Ravi" autofocus />
+    <button class="submit-btn" onclick="savePerson()">Add Karo</button>
     <button class="cancel-btn" onclick="closeModal()">Cancel</button>
   `);
   setTimeout(() => document.getElementById('newPersonName')?.focus(), 100);
@@ -824,16 +824,16 @@ window.openAddPerson = function() {
 
 window.savePerson = function() {
   const name = document.getElementById('newPersonName').value.trim();
-  if (!name) { showToast('Enter a name'); return; }
+  if (!name) { showToast('Naam likho'); return; }
   if (people.some(p => p.name.toLowerCase() === name.toLowerCase())) {
-    showToast('A person with this name already exists'); return;
+    showToast('Yeh naam already hai'); return;
   }
   const colorIdx = people.length % 10;
   const newPerson = { id: uid(), name, colorIdx, createdAt: Date.now() };
   people.unshift(newPerson);
   scheduleSave(); render();
   closeModal();
-  showToast(`Added ${name} ✓ — now add a transaction`);
+  showToast(`${name} add ho gaya ✓ — ab transaction likho`);
   // Auto-open the new person's detail so transaction buttons are immediately visible
   setTimeout(() => openPerson(newPerson.id), 200);
 };
@@ -844,13 +844,13 @@ window.askDeletePerson = function() {
   const txns = txnsForPerson(p.id);
   let warning = '';
   if (txns.length > 0) {
-    warning = `<div style="background:rgba(255,107,107,0.1);border:1px solid rgba(255,107,107,0.3);border-radius:10px;padding:12px;font-size:12px;color:var(--red);margin-bottom:14px;">⚠️ ${txns.length} transaction(s) will also be deleted. Current balance: ${bal === 0 ? '₹0' : (bal > 0 ? 'they owe ' : 'you owe ') + formatINR(bal)}.</div>`;
+    warning = `<div style="background:rgba(255,107,107,0.1);border:1px solid rgba(255,107,107,0.3);border-radius:10px;padding:12px;font-size:12px;color:var(--red);margin-bottom:14px;">⚠️ ${txns.length} transaction bhi delete ho jayenge. Abhi balance: ${bal === 0 ? '₹0' : (bal > 0 ? 'usne dene hai ' : 'aapne dene hai ') + formatINR(bal)}.</div>`;
   }
   openModal(`
-    <div class="modal-title">Delete ${escapeHtml(p.name)}?</div>
-    <div class="modal-sub">This can't be undone.</div>
+    <div class="modal-title">${escapeHtml(p.name)} ko delete karein?</div>
+    <div class="modal-sub">Yeh wapas nahi aayega.</div>
     ${warning}
-    <button class="submit-btn" style="background:var(--red);" onclick="doDeletePerson()">Delete Forever</button>
+    <button class="submit-btn" style="background:var(--red);" onclick="doDeletePerson()">Hamesha ke liye delete</button>
     <button class="cancel-btn" onclick="closeModal()">Cancel</button>
   `);
 };
@@ -876,7 +876,7 @@ window.doDeletePerson = function() {
   scheduleSave();
   closeModal();
   closeDetail();
-  showToast('Person deleted');
+  showToast('Banda delete ho gaya');
 };
 
 // ===== Add Transaction (lent/borrowed) =====
@@ -886,19 +886,19 @@ window.openAddTxn = function(kind) {
   const p = getPerson(viewingPersonId); if (!p) return;
   const isLent = kind === 'lent';
   openModal(`
-    <div class="modal-title">${isLent ? 'You Lent' : 'You Borrowed'}</div>
-    <div class="modal-sub">${isLent ? `Money you gave to ${escapeHtml(p.name)}` : `Money ${escapeHtml(p.name)} gave to you`}</div>
+    <div class="modal-title">${isLent ? 'Tumne Diye' : 'Tumne Liye'}</div>
+    <div class="modal-sub">${isLent ? `Paise jo aapne ${escapeHtml(p.name)} ko diye` : `Paise jo ${escapeHtml(p.name)} ne aapko diye`}</div>
 
-    <label class="form-label">Amount (₹)</label>
+    <label class="form-label">Kitne paise (₹)</label>
     <input class="form-input" id="txnAmount" placeholder="0" inputmode="numeric" type="number" />
 
     <label class="form-label">Date</label>
     <input class="form-input" id="txnDate" type="date" value="${todayStr()}" />
 
     <label class="form-label">Note (optional)</label>
-    <input class="form-input" id="txnNote" placeholder="e.g. Movie ticket, Dinner" />
+    <input class="form-input" id="txnNote" placeholder="jaise: Movie ticket, Dinner" />
 
-    <button class="submit-btn" onclick="saveTxn()">${isLent ? 'Save' : 'Save'}</button>
+    <button class="submit-btn" onclick="saveTxn()">Save Karo</button>
     <button class="cancel-btn" onclick="closeModal()">Cancel</button>
   `);
   setTimeout(() => document.getElementById('txnAmount')?.focus(), 100);
@@ -906,7 +906,7 @@ window.openAddTxn = function(kind) {
 
 window.saveTxn = function() {
   const amount = parseFloat(document.getElementById('txnAmount').value);
-  if (!amount || amount <= 0) { showToast('Enter a valid amount'); return; }
+  if (!amount || amount <= 0) { showToast('Sahi amount likho'); return; }
   const date = document.getElementById('txnDate').value || todayStr();
   const note = document.getElementById('txnNote').value.trim();
   transactions.unshift({
@@ -915,38 +915,38 @@ window.saveTxn = function() {
   });
   scheduleSave(); render();
   closeModal();
-  showToast(pendingKind === 'lent' ? 'Lent recorded ✓' : 'Borrowed recorded ✓');
+  showToast(pendingKind === 'lent' ? 'Diye gaye record ho gaye ✓' : 'Liye gaye record ho gaye ✓');
 };
 
 // ===== Settle =====
 window.openSettle = function() {
   const p = getPerson(viewingPersonId); if (!p) return;
   const bal = balanceWithPerson(p.id);
-  if (bal === 0) { showToast('Already settled — nothing to clear'); return; }
-  const owedBy = bal > 0 ? 'they owe' : 'you owe';
+  if (bal === 0) { showToast('Hisaab pehle se clear hai'); return; }
+  const owedBy = bal > 0 ? `${p.name} ko dene hai` : 'aapne dene hai';
   openModal(`
-    <div class="modal-title">Settle with ${escapeHtml(p.name)}</div>
-    <div class="modal-sub">Currently ${owedBy} ${formatINR(bal)}</div>
+    <div class="modal-title">${escapeHtml(p.name)} ke saath settle karo</div>
+    <div class="modal-sub">Abhi ${owedBy} ${formatINR(bal)}</div>
 
-    <label class="form-label">Settlement Amount (₹)</label>
+    <label class="form-label">Settle Amount (₹)</label>
     <input class="form-input" id="settleAmount" type="number" inputmode="numeric" value="${Math.abs(bal)}" />
 
     <label class="form-label">Date</label>
     <input class="form-input" id="settleDate" type="date" value="${todayStr()}" />
 
     <label class="form-label">Note (optional)</label>
-    <input class="form-input" id="settleNote" placeholder="${bal > 0 ? 'Cash received' : 'Cash paid back'}" />
+    <input class="form-input" id="settleNote" placeholder="${bal > 0 ? 'Cash mil gaya' : 'Cash de diya'}" />
 
-    <button class="submit-btn" onclick="saveSettle(${bal > 0 ? 1 : -1})">Mark as Settled</button>
+    <button class="submit-btn" onclick="saveSettle(${bal > 0 ? 1 : -1})">Settle Mark Karo</button>
     <button class="cancel-btn" onclick="closeModal()">Cancel</button>
   `);
 };
 
 window.saveSettle = function(sign) {
   const raw = parseFloat(document.getElementById('settleAmount').value);
-  if (!raw || raw <= 0) { showToast('Enter a valid amount'); return; }
+  if (!raw || raw <= 0) { showToast('Sahi amount likho'); return; }
   const date = document.getElementById('settleDate').value || todayStr();
-  const note = document.getElementById('settleNote').value.trim() || (sign > 0 ? 'Settled (received)' : 'Settled (paid back)');
+  const note = document.getElementById('settleNote').value.trim() || (sign > 0 ? 'Settled (mila)' : 'Settled (diya)');
   // Store as signed amount: positive sign means they paid me back (reduces what they owe)
   transactions.unshift({
     id: uid(), kind: 'settle', personId: viewingPersonId,
@@ -954,23 +954,23 @@ window.saveSettle = function(sign) {
   });
   scheduleSave(); render();
   closeModal();
-  showToast('Settlement recorded ✓');
+  showToast('Settle record ho gaya ✓');
 };
 
 window.deleteTxn = function(txnId) {
-  if (!confirm('Delete this transaction?')) return;
+  if (!confirm('Yeh transaction delete karein?')) return;
   transactions = transactions.filter(t => t.id !== txnId);
   scheduleSave(); render();
-  showToast('Transaction deleted');
+  showToast('Transaction delete ho gaya');
 };
 
 // ===== Groups =====
 window.openAddGroup = function() {
   if (people.length === 0) {
     openModal(`
-      <div class="modal-title">Add people first</div>
-      <div class="modal-sub">You need at least one person to create a group.</div>
-      <button class="submit-btn" onclick="closeModal();setMainTab('people');openAddPerson()">Add Person</button>
+      <div class="modal-title">Pehle log add karo</div>
+      <div class="modal-sub">Group banane ke liye kam se kam ek banda chahiye.</div>
+      <button class="submit-btn" onclick="closeModal();setMainTab('people');openAddPerson()">Banda Add Karo</button>
       <button class="cancel-btn" onclick="closeModal()">Cancel</button>
     `);
     return;
@@ -979,16 +979,16 @@ window.openAddGroup = function() {
     `<div class="member-chip" data-pid="${p.id}" onclick="toggleMemberChip(this)">${escapeHtml(p.name)}</div>`
   ).join('');
   openModal(`
-    <div class="modal-title">New Group / Trip</div>
-    <div class="modal-sub">e.g. Goa Trip, Office Diwali, Roommate Expenses</div>
+    <div class="modal-title">Naya Group / Trip</div>
+    <div class="modal-sub">jaise: Goa Trip, Office Diwali, Roommate Kharcha</div>
 
-    <label class="form-label">Group Name</label>
-    <input class="form-input" id="newGroupName" placeholder="e.g. Goa Trip Dec 2026" />
+    <label class="form-label">Group ka Naam</label>
+    <input class="form-input" id="newGroupName" placeholder="jaise: Goa Trip Dec 2026" />
 
-    <label class="form-label">Select Members</label>
+    <label class="form-label">Members Select Karo</label>
     <div class="member-grid">${memberChips}</div>
 
-    <button class="submit-btn" onclick="saveGroup()">Create Group</button>
+    <button class="submit-btn" onclick="saveGroup()">Group Banao</button>
     <button class="cancel-btn" onclick="closeModal()">Cancel</button>
   `);
 };
@@ -997,16 +997,16 @@ window.toggleMemberChip = function(el) { el.classList.toggle('active'); };
 
 window.saveGroup = function() {
   const name = document.getElementById('newGroupName').value.trim();
-  if (!name) { showToast('Enter a group name'); return; }
+  if (!name) { showToast('Group ka naam likho'); return; }
   const chips = document.querySelectorAll('.member-chip.active');
   const memberIds = Array.from(chips).map(c => c.dataset.pid);
-  if (memberIds.length === 0) { showToast('Select at least one member'); return; }
+  if (memberIds.length === 0) { showToast('Kam se kam ek member chuno'); return; }
   const newGroup = { id: uid(), name, memberIds, includeMe: true, createdAt: Date.now() };
   groups.unshift(newGroup);
   scheduleSave(); render();
   closeModal();
-  showToast(`Group "${name}" created ✓`);
-  // Auto-open so user sees "Add Expense" button
+  showToast(`Group "${name}" ban gaya ✓`);
+  // Auto-open so user sees the Kharcha Add Karo button
   setTimeout(() => openGroup(newGroup.id), 200);
 };
 
@@ -1014,13 +1014,13 @@ window.askDeleteGroup = function() {
   const g = getGroup(viewingGroupId); if (!g) return;
   const txns = txnsForGroup(g.id);
   const warning = txns.length > 0
-    ? `<div style="background:rgba(255,107,107,0.1);border:1px solid rgba(255,107,107,0.3);border-radius:10px;padding:12px;font-size:12px;color:var(--red);margin-bottom:14px;">⚠️ ${txns.length} expense(s) in this group will also be deleted, affecting balances.</div>`
+    ? `<div style="background:rgba(255,107,107,0.1);border:1px solid rgba(255,107,107,0.3);border-radius:10px;padding:12px;font-size:12px;color:var(--red);margin-bottom:14px;">⚠️ Is group ke ${txns.length} kharche bhi delete ho jayenge, balance pe asar padega.</div>`
     : '';
   openModal(`
-    <div class="modal-title">Delete ${escapeHtml(g.name)}?</div>
-    <div class="modal-sub">This can't be undone.</div>
+    <div class="modal-title">${escapeHtml(g.name)} ko delete karein?</div>
+    <div class="modal-sub">Yeh wapas nahi aayega.</div>
     ${warning}
-    <button class="submit-btn" style="background:var(--red);" onclick="doDeleteGroup()">Delete Forever</button>
+    <button class="submit-btn" style="background:var(--red);" onclick="doDeleteGroup()">Hamesha ke liye delete</button>
     <button class="cancel-btn" onclick="closeModal()">Cancel</button>
   `);
 };
@@ -1032,7 +1032,7 @@ window.doDeleteGroup = function() {
   scheduleSave();
   closeModal();
   closeDetail();
-  showToast('Group deleted');
+  showToast('Group delete ho gaya');
 };
 
 // ===== Add Split =====
@@ -1040,44 +1040,44 @@ window.openAddSplit = function() {
   const g = getGroup(viewingGroupId); if (!g) return;
   const allParticipants = ['me', ...g.memberIds];
   const payerOptions = allParticipants.map(id =>
-    `<option value="${id}">${id === 'me' ? 'Me' : escapeHtml(getPerson(id)?.name || '?')}</option>`
+    `<option value="${id}">${id === 'me' ? 'Maine' : escapeHtml(getPerson(id)?.name || '?')}</option>`
   ).join('');
   const splitChips = allParticipants.map(id =>
-    `<div class="member-chip active" data-pid="${id}" onclick="toggleMemberChip(this)">${id === 'me' ? 'Me' : escapeHtml(getPerson(id)?.name || '?')}</div>`
+    `<div class="member-chip active" data-pid="${id}" onclick="toggleMemberChip(this)">${id === 'me' ? 'Main' : escapeHtml(getPerson(id)?.name || '?')}</div>`
   ).join('');
   openModal(`
-    <div class="modal-title">Add Expense</div>
-    <div class="modal-sub">Splits the amount among selected members</div>
+    <div class="modal-title">Kharcha Add Karo</div>
+    <div class="modal-sub">Selected members mein split ho jayega</div>
 
-    <label class="form-label">Description</label>
-    <input class="form-input" id="splitNote" placeholder="e.g. Dinner at Cafe" />
+    <label class="form-label">Kya ke liye</label>
+    <input class="form-input" id="splitNote" placeholder="jaise: Cafe mein Dinner" />
 
-    <label class="form-label">Amount (₹)</label>
+    <label class="form-label">Total amount (₹)</label>
     <input class="form-input" id="splitAmount" type="number" inputmode="numeric" placeholder="0" />
 
     <label class="form-label">Date</label>
     <input class="form-input" id="splitDate" type="date" value="${todayStr()}" />
 
-    <label class="form-label">Paid by</label>
+    <label class="form-label">Kisne diye</label>
     <select class="form-select" id="splitPaidBy">${payerOptions}</select>
 
-    <label class="form-label">Split equally among</label>
+    <label class="form-label">Kismein barabar split karna hai</label>
     <div class="member-grid">${splitChips}</div>
 
-    <button class="submit-btn" onclick="saveSplit()">Save Expense</button>
+    <button class="submit-btn" onclick="saveSplit()">Kharcha Save Karo</button>
     <button class="cancel-btn" onclick="closeModal()">Cancel</button>
   `);
 };
 
 window.saveSplit = function() {
   const amount = parseFloat(document.getElementById('splitAmount').value);
-  if (!amount || amount <= 0) { showToast('Enter a valid amount'); return; }
-  const note = document.getElementById('splitNote').value.trim() || 'Expense';
+  if (!amount || amount <= 0) { showToast('Sahi amount likho'); return; }
+  const note = document.getElementById('splitNote').value.trim() || 'Kharcha';
   const date = document.getElementById('splitDate').value || todayStr();
   const paidById = document.getElementById('splitPaidBy').value;
   const chips = document.querySelectorAll('.member-chip.active');
   const splitAmong = Array.from(chips).map(c => c.dataset.pid);
-  if (splitAmong.length === 0) { showToast('Select at least one person to split among'); return; }
+  if (splitAmong.length === 0) { showToast('Kam se kam ek banda chuno'); return; }
   transactions.unshift({
     id: uid(), kind: 'split', groupId: viewingGroupId,
     amount, date, note, paidById, splitAmong, splitMode: 'equal',
@@ -1085,7 +1085,7 @@ window.saveSplit = function() {
   });
   scheduleSave(); render();
   closeModal();
-  showToast('Expense added ✓');
+  showToast('Kharcha add ho gaya ✓');
 };
 
 // ===== Settlement plan algorithm =====
@@ -1154,8 +1154,8 @@ function renderPeopleList() {
   if (people.length === 0) {
     list.innerHTML = `<div class="empty">
       <div class="empty-icon">👥</div>
-      <div class="empty-text">No people yet</div>
-      <div class="empty-hint">Tap + to add someone you owe or who owes you</div>
+      <div class="empty-text">Abhi koi banda nahi hai</div>
+      <div class="empty-hint">+ dabake naya banda add karo</div>
     </div>`;
     return;
   }
@@ -1164,7 +1164,7 @@ function renderPeopleList() {
   withBal.sort((a, b) => Math.abs(b.b) - Math.abs(a.b));
   list.innerHTML = withBal.map(({ p, b }) => {
     const cls = b > 0 ? 'pos' : (b < 0 ? 'neg' : 'zero');
-    const label = b > 0 ? 'owes you' : (b < 0 ? 'you owe' : 'tap to add transactions');
+    const label = b > 0 ? 'tumhe dene hai' : (b < 0 ? 'tumne dene hai' : 'tap karke transaction add karo');
     const amt = b === 0 ? '—' : (b > 0 ? '+' : '-') + formatINR(b);
     return `<div class="list-card" onclick="openPerson('${p.id}')">
       <div class="list-icon avatar-color-${p.colorIdx || 0}">${personInitial(p.name)}</div>
@@ -1184,8 +1184,8 @@ function renderGroupsList() {
   if (groups.length === 0) {
     list.innerHTML = `<div class="empty">
       <div class="empty-icon">🎫</div>
-      <div class="empty-text">No groups yet</div>
-      <div class="empty-hint">Create a group for trips or shared expenses</div>
+      <div class="empty-text">Abhi koi group nahi hai</div>
+      <div class="empty-hint">Trip ya saath wale kharche ke liye group banao</div>
     </div>`;
     return;
   }
@@ -1196,7 +1196,7 @@ function renderGroupsList() {
       <div class="list-icon" style="background:rgba(0,194,168,0.15);color:var(--teal);">🎫</div>
       <div class="list-info">
         <div class="list-name">${escapeHtml(g.name)}</div>
-        <div class="list-meta">${g.memberIds.length + 1} members · ${txnCount} expense${txnCount !== 1 ? 's' : ''}</div>
+        <div class="list-meta">${g.memberIds.length + 1} members · ${txnCount} kharch${txnCount !== 1 ? 'e' : 'a'}</div>
       </div>
       <div class="list-amt zero">${formatINR(total)}</div>
       <div style="color:var(--dim);font-size:20px;margin-left:4px;">›</div>
@@ -1214,12 +1214,12 @@ function renderPersonDetail() {
   else if (bal < 0) { balEl.textContent = '-' + formatINR(bal); balEl.className = 'detail-bal neg'; }
   else { balEl.textContent = '₹0'; balEl.className = 'detail-bal zero'; }
   document.getElementById('personDetailSummary').textContent =
-    bal > 0 ? `${p.name} owes you` : (bal < 0 ? `You owe ${p.name}` : 'All settled');
+    bal > 0 ? `${p.name} ko aapke dene hai` : (bal < 0 ? `Aapne ${p.name} ko dene hai` : 'Sab clear hai');
 
   const txns = txnsForPerson(p.id);
   const list = document.getElementById('personTxnList');
   if (txns.length === 0) {
-    list.innerHTML = `<div class="empty"><div class="empty-icon">🧾</div><div class="empty-text">No transactions yet</div></div>`;
+    list.innerHTML = `<div class="empty"><div class="empty-icon">🧾</div><div class="empty-text">Abhi koi transaction nahi hai</div></div>`;
     return;
   }
   list.innerHTML = txns.map(t => renderPersonTxn(t, p.id)).join('');
@@ -1228,26 +1228,24 @@ function renderPersonDetail() {
 function renderPersonTxn(t, personId) {
   let icon, label, amtCls, amtStr, kindClass;
   if (t.kind === 'lent') {
-    icon = '↗'; label = t.note || 'Lent'; kindClass = 'lent';
+    icon = '↗'; label = t.note || 'Diye'; kindClass = 'lent';
     amtCls = 'pos'; amtStr = '+' + formatINR(t.amount);
   } else if (t.kind === 'borrowed') {
-    icon = '↙'; label = t.note || 'Borrowed'; kindClass = 'borrowed';
+    icon = '↙'; label = t.note || 'Liye'; kindClass = 'borrowed';
     amtCls = 'neg'; amtStr = '-' + formatINR(t.amount);
   } else if (t.kind === 'settle') {
-    icon = '✓'; label = t.note || 'Settled'; kindClass = 'settle';
-    // settle amount sign: positive sign in stored amount means they paid me back (debit goes down)
-    // visually mark as a settlement
+    icon = '✓'; label = t.note || 'Settle'; kindClass = 'settle';
     amtCls = t.amount > 0 ? 'pos' : 'neg';
     amtStr = (t.amount > 0 ? '+' : '-') + formatINR(t.amount);
   } else if (t.kind === 'split') {
     const g = getGroup(t.groupId);
-    icon = '🎫'; label = (t.note || 'Expense') + (g ? ` · ${g.name}` : '');
+    icon = '🎫'; label = (t.note || 'Kharcha') + (g ? ` · ${g.name}` : '');
     kindClass = 'split';
     const delta = personDeltaInSplit(t, personId);
     amtCls = delta > 0 ? 'pos' : (delta < 0 ? 'neg' : 'zero');
     amtStr = delta === 0 ? '—' : (delta > 0 ? '+' : '-') + formatINR(delta);
   }
-  const canDelete = t.kind !== 'split'; // splits are deleted from group view
+  const canDelete = t.kind !== 'split';
   return `<div class="txn-item">
     <div class="txn-icon ${kindClass}">${icon}</div>
     <div class="txn-info">
@@ -1265,19 +1263,19 @@ function renderPersonTxn(t, personId) {
 function renderGroupDetail() {
   const g = getGroup(viewingGroupId); if (!g) { closeDetail(); return; }
   document.getElementById('groupDetailName').textContent = g.name;
-  const memberNames = ['You', ...g.memberIds.map(id => getPerson(id)?.name || '?')].join(' · ');
+  const memberNames = ['Aap', ...g.memberIds.map(id => getPerson(id)?.name || '?')].join(' · ');
   document.getElementById('groupDetailMembers').textContent = memberNames;
 
   const transfers = computeGroupSettlement(g.id);
   const planEl = document.getElementById('settlementPlan');
   if (transfers.length === 0) {
-    planEl.innerHTML = `<div class="settle-card">✅ Everyone's settled in this group</div>`;
+    planEl.innerHTML = `<div class="settle-card">✅ Is group mein sab clear hai</div>`;
   } else {
     planEl.innerHTML = transfers.map(t => {
-      const fromName = t.from === 'me' ? 'You' : (getPerson(t.from)?.name || '?');
-      const toName = t.to === 'me' ? 'you' : (getPerson(t.to)?.name || '?');
+      const fromName = t.from === 'me' ? 'Aap' : (getPerson(t.from)?.name || '?');
+      const toName = t.to === 'me' ? 'aapko' : `${getPerson(t.to)?.name || '?'} ko`;
       return `<div class="settle-card">
-        <span class="settle-name">${escapeHtml(fromName)}</span> ${t.from === 'me' ? 'pay' : 'pays'} <span class="settle-name">${escapeHtml(toName)}</span>
+        <span class="settle-name">${escapeHtml(fromName)}</span> ${t.from === 'me' ? 'do' : 'de'} <span class="settle-name">${escapeHtml(toName)}</span>
         <strong style="float:right;color:var(--teal-light);">${formatINR(t.amount)}</strong>
       </div>`;
     }).join('');
@@ -1286,17 +1284,17 @@ function renderGroupDetail() {
   const txns = txnsForGroup(g.id);
   const list = document.getElementById('groupTxnList');
   if (txns.length === 0) {
-    list.innerHTML = `<div class="empty"><div class="empty-icon">💰</div><div class="empty-text">No expenses yet</div></div>`;
+    list.innerHTML = `<div class="empty"><div class="empty-icon">💰</div><div class="empty-text">Abhi koi kharcha nahi hai</div></div>`;
     return;
   }
   list.innerHTML = txns.map(t => {
-    const payerName = t.paidById === 'me' ? 'You' : (getPerson(t.paidById)?.name || '?');
+    const payerName = t.paidById === 'me' ? 'Aapne' : (getPerson(t.paidById)?.name + ' ne' || '?');
     const splitCount = (t.splitAmong || []).length;
     return `<div class="txn-item">
       <div class="txn-icon split">🎫</div>
       <div class="txn-info">
-        <div class="txn-note">${escapeHtml(t.note || 'Expense')}</div>
-        <div class="txn-meta">${fmtDate(t.date)} · Paid by ${escapeHtml(payerName)} · Split ${splitCount}-way</div>
+        <div class="txn-note">${escapeHtml(t.note || 'Kharcha')}</div>
+        <div class="txn-meta">${fmtDate(t.date)} · ${escapeHtml(payerName)} diye · ${splitCount}-way split</div>
       </div>
       <div class="txn-actions">
         <div class="txn-amt" style="color:var(--text);">${formatINR(t.amount)}</div>
@@ -1311,29 +1309,29 @@ window.shareSummary = function() {
   const p = getPerson(viewingPersonId); if (!p) return;
   const bal = balanceWithPerson(p.id);
   const txns = txnsForPerson(p.id);
-  let text = `📒 Hisaab with ${p.name}\n(as on ${fmtDate(todayStr())})\n\n`;
+  let text = `📒 ${p.name} ke saath hisaab\n(${fmtDate(todayStr())} tak)\n\n`;
   if (txns.length === 0) {
-    text += 'No transactions yet.';
+    text += 'Abhi koi transaction nahi hai.';
   } else {
     txns.slice().reverse().forEach(t => {
       const d = fmtDate(t.date);
-      if (t.kind === 'lent') text += `${d} — ${t.note || 'Lent'}: ₹${t.amount} (I paid)\n`;
-      else if (t.kind === 'borrowed') text += `${d} — ${t.note || 'Borrowed'}: ₹${t.amount} (${p.name} paid)\n`;
+      if (t.kind === 'lent') text += `${d} — ${t.note || 'Diye'}: ₹${t.amount} (maine diye)\n`;
+      else if (t.kind === 'borrowed') text += `${d} — ${t.note || 'Liye'}: ₹${t.amount} (${p.name} ne diye)\n`;
       else if (t.kind === 'settle') {
-        const direction = t.amount > 0 ? `${p.name} paid back` : 'I paid back';
-        text += `${d} — Settled: ₹${Math.abs(t.amount)} (${direction})\n`;
+        const direction = t.amount > 0 ? `${p.name} ne wapas diye` : 'maine wapas diye';
+        text += `${d} — Settle: ₹${Math.abs(t.amount)} (${direction})\n`;
       } else if (t.kind === 'split') {
         const g = getGroup(t.groupId);
         const delta = personDeltaInSplit(t, p.id);
         if (delta !== 0) {
-          text += `${d} — ${t.note || 'Expense'}${g ? ` (${g.name})` : ''}: ₹${Math.abs(delta).toFixed(0)} ${delta > 0 ? `owed to me` : `I owe`}\n`;
+          text += `${d} — ${t.note || 'Kharcha'}${g ? ` (${g.name})` : ''}: ₹${Math.abs(delta).toFixed(0)} ${delta > 0 ? `mujhe dene hain` : `maine dene hain`}\n`;
         }
       }
     });
-    text += `\n💰 Balance: `;
-    if (bal > 0) text += `${p.name} owes ₹${bal.toFixed(0)} ✨`;
-    else if (bal < 0) text += `I owe ${p.name} ₹${Math.abs(bal).toFixed(0)}`;
-    else text += `All clear ✅`;
+    text += `\n💰 Final hisaab: `;
+    if (bal > 0) text += `${p.name} ne ₹${bal.toFixed(0)} dene hain ✨`;
+    else if (bal < 0) text += `Maine ${p.name} ko ₹${Math.abs(bal).toFixed(0)} dene hain`;
+    else text += `Sab clear ✅`;
   }
   shareOrCopy(text);
 };
@@ -1342,26 +1340,26 @@ window.shareGroupSummary = function() {
   const g = getGroup(viewingGroupId); if (!g) return;
   const txns = txnsForGroup(g.id);
   const transfers = computeGroupSettlement(g.id);
-  const memberNames = ['You', ...g.memberIds.map(id => getPerson(id)?.name || '?')].join(', ');
-  let text = `📒 ${g.name}\n(as on ${fmtDate(todayStr())})\nMembers: ${memberNames}\n\n`;
+  const memberNames = ['Aap', ...g.memberIds.map(id => getPerson(id)?.name || '?')].join(', ');
+  let text = `📒 ${g.name}\n(${fmtDate(todayStr())} tak)\nMembers: ${memberNames}\n\n`;
 
   if (txns.length === 0) {
-    text += 'No expenses yet.';
+    text += 'Abhi koi kharcha nahi hai.';
   } else {
-    text += '💰 Expenses:\n';
+    text += '💰 Kharche:\n';
     txns.slice().reverse().forEach(t => {
-      const payer = t.paidById === 'me' ? 'You' : (getPerson(t.paidById)?.name || '?');
+      const payer = t.paidById === 'me' ? 'aapne' : `${getPerson(t.paidById)?.name || '?'} ne`;
       const splitCount = (t.splitAmong || []).length;
-      text += `• ${fmtDate(t.date)} — ${t.note || 'Expense'}: ₹${t.amount.toFixed(0)} (paid by ${payer}, split ${splitCount}-way)\n`;
+      text += `• ${fmtDate(t.date)} — ${t.note || 'Kharcha'}: ₹${t.amount.toFixed(0)} (${payer} diye, ${splitCount}-way split)\n`;
     });
     text += `\nTotal: ₹${txns.reduce((s,t) => s + t.amount, 0).toFixed(0)}\n\n`;
     if (transfers.length === 0) {
-      text += '✅ Everyone is settled';
+      text += '✅ Sab clear hai';
     } else {
       text += '🔄 Settlement Plan:\n';
       transfers.forEach(t => {
-        const from = t.from === 'me' ? 'You' : (getPerson(t.from)?.name || '?');
-        const to = t.to === 'me' ? 'you' : (getPerson(t.to)?.name || '?');
+        const from = t.from === 'me' ? 'Aap' : (getPerson(t.from)?.name || '?');
+        const to = t.to === 'me' ? 'aapko' : (getPerson(t.to)?.name || '?') + ' ko';
         text += `• ${from} → ${to}: ₹${t.amount.toFixed(0)}\n`;
       });
     }
@@ -1373,21 +1371,19 @@ async function shareOrCopy(text) {
   if (navigator.share) {
     try {
       await navigator.share({ text });
-      showToast('Shared ✓');
+      showToast('Share ho gaya ✓');
       return;
     } catch (e) {
       if (e.name === 'AbortError') return;
     }
   }
-  // Fallback: copy to clipboard
   try {
     await navigator.clipboard.writeText(text);
-    showToast('Summary copied to clipboard');
+    showToast('Summary copy ho gaya');
   } catch (e) {
-    // Last resort: show in a modal
     openModal(`
       <div class="modal-title">Summary</div>
-      <div class="modal-sub">Copy this text and share manually</div>
+      <div class="modal-sub">Yeh text copy karke share karo</div>
       <textarea class="form-input" rows="12" style="resize:vertical;font-family:monospace;font-size:13px;" readonly>${escapeHtml(text)}</textarea>
       <button class="cancel-btn" onclick="closeModal()">Close</button>
     `);
@@ -1434,7 +1430,7 @@ setTimeout(() => {
     document.getElementById('loginOverlay').classList.remove('hidden');
     if (!window.__firebase) {
       const err = document.getElementById('loginError');
-      err.textContent = 'Network slow. Connect to internet and reload.';
+      err.textContent = 'Network slow hai. Internet connect karke reload karo.';
       err.classList.add('show');
     }
   }
