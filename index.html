@@ -1,0 +1,1445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#0F0F13" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Hisaab" />
+  <meta name="description" content="Hisaab — track who owes whom" />
+  <link rel="manifest" id="manifestPlaceholder" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%2300C2A8'/><text y='.9em' font-size='62' x='12'>📒</text></svg>" />
+  <title>📒 Hisaab</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg: #0F0F13; --surface: #1A1A24; --surface2: #0F0F18;
+      --border: #2A2A3A; --teal: #00C2A8; --teal-light: #4FE0CB;
+      --red: #FF6B6B; --green: #4ADE80; --amber: #F59E0B;
+      --text: #E8E8F0; --muted: #666680; --dim: #555568;
+    }
+
+    html, body {
+      background: var(--bg); color: var(--text);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
+      min-height: 100vh;
+      -webkit-tap-highlight-color: transparent;
+      overscroll-behavior: none;
+    }
+
+    .glow { position: fixed; width: 400px; height: 400px; border-radius: 50%; background: radial-gradient(circle, rgba(0,194,168,0.12) 0%, transparent 70%); top: -100px; right: -100px; pointer-events: none; z-index: 0; }
+    .glow2 { position: fixed; width: 300px; height: 300px; border-radius: 50%; background: radial-gradient(circle, rgba(255,107,107,0.08) 0%, transparent 70%); bottom: 100px; left: -50px; pointer-events: none; z-index: 0; }
+
+    .container {
+      max-width: 480px; margin: 0 auto;
+      padding: 24px 16px 110px;
+      padding-top: calc(20px + env(safe-area-inset-top, 0px));
+      padding-bottom: calc(110px + env(safe-area-inset-bottom, 0px));
+      position: relative; z-index: 1;
+    }
+
+    .header-bar { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+    .header-bar h1 {
+      font-size: 26px; font-weight: 800; letter-spacing: -0.5px;
+      background: linear-gradient(135deg, #fff 30%, var(--teal-light));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .user-chip {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 20px; padding: 4px 4px 4px 10px;
+      cursor: pointer; position: relative;
+    }
+    .user-chip .avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--teal); color: #fff; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 13px; overflow: hidden; }
+    .user-chip .avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .sync-status { font-size: 10px; font-weight: 700; color: var(--green); }
+    .sync-status.offline { color: var(--amber); }
+    .sync-status.syncing { color: var(--teal-light); }
+    .sync-status.error { color: var(--red); }
+
+    .user-menu {
+      position: absolute; top: 42px; right: 0;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 6px;
+      min-width: 220px; box-shadow: 0 8px 24px rgba(0,0,0,0.5);
+      z-index: 50; display: none;
+    }
+    .user-menu.open { display: block; }
+    .user-menu .menu-item { padding: 10px 12px; border-radius: 8px; font-size: 13px; color: var(--text); cursor: pointer; display: flex; align-items: center; gap: 8px; }
+    .user-menu .menu-item:hover { background: var(--surface2); }
+    .user-menu .menu-info { padding: 8px 12px 10px; font-size: 11px; color: var(--muted); border-bottom: 1px solid var(--border); margin-bottom: 4px; word-break: break-all; }
+
+    .subtitle { font-size: 13px; color: var(--muted); margin-top: 4px; margin-bottom: 20px; }
+
+    /* Dashboard summary */
+    .dash-card {
+      background: linear-gradient(135deg, #14302C 0%, #15141F 100%);
+      border: 1px solid rgba(0,194,168,0.25);
+      border-radius: 20px; padding: 18px 20px; margin-bottom: 18px;
+    }
+    .dash-row { display: flex; gap: 12px; margin-top: 8px; }
+    .dash-cell { flex: 1; }
+    .dash-label { font-size: 11px; color: var(--muted); font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; margin-bottom: 4px; }
+    .dash-val { font-size: 20px; font-weight: 800; letter-spacing: -0.5px; }
+    .dash-val.pos { color: var(--green); }
+    .dash-val.neg { color: var(--red); }
+    .net-pill {
+      margin-top: 14px; padding: 12px;
+      border-radius: 14px; background: var(--surface2); border: 1px solid var(--border);
+      display: flex; justify-content: space-between; align-items: center;
+    }
+    .net-pill .net-label { font-size: 12px; color: var(--muted); }
+    .net-pill .net-val { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+
+    /* Tabs */
+    .tabs { display: flex; gap: 6px; background: var(--surface); border-radius: 14px; padding: 5px; margin-bottom: 16px; }
+    .tab-btn { flex: 1; padding: 9px 0; border: none; border-radius: 10px; font-size: 13px; font-weight: 600; cursor: pointer; background: transparent; color: var(--dim); font-family: inherit; }
+    .tab-btn.active { background: var(--teal); color: #fff; }
+
+    /* List section */
+    .section-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; margin-top: 6px; }
+    .section-title { font-size: 14px; font-weight: 700; color: var(--text); }
+    .icon-btn {
+      width: 34px; height: 34px; border-radius: 10px;
+      background: var(--teal); border: none; color: #fff;
+      font-size: 20px; font-weight: 700; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      line-height: 1;
+    }
+
+    .list-card {
+      background: var(--surface); border-radius: 16px;
+      padding: 14px 16px; margin-bottom: 10px;
+      display: flex; align-items: center; gap: 12px;
+      cursor: pointer;
+      border: 1px solid transparent;
+      transition: border-color 0.15s;
+    }
+    .list-card:hover { border-color: var(--border); }
+    .list-icon {
+      width: 44px; height: 44px; border-radius: 12px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px; font-weight: 700; flex-shrink: 0;
+    }
+    .list-info { flex: 1; min-width: 0; }
+    .list-name { font-size: 15px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .list-meta { font-size: 12px; color: var(--dim); margin-top: 2px; }
+    .list-amt { font-size: 15px; font-weight: 800; flex-shrink: 0; }
+    .list-amt.pos { color: var(--green); }
+    .list-amt.neg { color: var(--red); }
+    .list-amt.zero { color: var(--dim); }
+
+    .empty { text-align: center; padding: 50px 20px; color: var(--dim); }
+    .empty-icon { font-size: 44px; margin-bottom: 10px; }
+    .empty-text { font-size: 13px; margin-bottom: 6px; }
+    .empty-hint { font-size: 11px; color: var(--dim); }
+
+    /* Modal */
+    .modal-back {
+      position: fixed; inset: 0;
+      background: rgba(0,0,0,0.7);
+      display: none; align-items: flex-end; justify-content: center;
+      z-index: 200; padding: 0;
+      animation: fadein 0.15s;
+    }
+    .modal-back.open { display: flex; }
+    @keyframes fadein { from { opacity: 0; } to { opacity: 1; } }
+    .modal {
+      background: var(--surface);
+      border-radius: 20px 20px 0 0;
+      width: 100%; max-width: 480px;
+      max-height: 92vh; overflow-y: auto;
+      padding: 22px 20px 26px;
+      padding-bottom: calc(26px + env(safe-area-inset-bottom, 0px));
+      animation: slideup 0.2s;
+    }
+    @keyframes slideup { from { transform: translateY(40px); } to { transform: translateY(0); } }
+    .modal-handle { width: 40px; height: 4px; background: var(--border); border-radius: 2px; margin: -10px auto 16px; }
+    .modal-title { font-size: 18px; font-weight: 800; margin-bottom: 4px; }
+    .modal-sub { font-size: 12px; color: var(--muted); margin-bottom: 16px; }
+
+    .form-label { font-size: 11px; font-weight: 600; color: var(--muted); margin-bottom: 6px; display: block; text-transform: uppercase; letter-spacing: 0.5px; }
+    .form-input { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; color: var(--text); font-size: 16px; padding: 12px 14px; outline: none; font-family: inherit; margin-bottom: 14px; -webkit-appearance: none; color-scheme: dark; }
+    .form-input::placeholder { color: var(--dim); }
+    .form-select { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; color: var(--text); font-size: 16px; padding: 12px 14px; outline: none; font-family: inherit; margin-bottom: 14px; -webkit-appearance: none; color-scheme: dark; }
+
+    .kind-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+    .kind-btn {
+      padding: 12px; border: 2px solid var(--border);
+      background: var(--surface2); border-radius: 12px;
+      font-size: 13px; font-weight: 600; cursor: pointer;
+      color: var(--dim); font-family: inherit;
+      display: flex; flex-direction: column; align-items: center; gap: 4px;
+    }
+    .kind-btn .kind-em { font-size: 18px; }
+    .kind-btn.active.lent { border-color: var(--green); color: var(--green); background: rgba(74,222,128,0.08); }
+    .kind-btn.active.borrowed { border-color: var(--red); color: var(--red); background: rgba(255,107,107,0.08); }
+
+    .submit-btn { width: 100%; padding: 14px; border: none; border-radius: 14px; background: linear-gradient(135deg, var(--teal), var(--teal-light)); color: #fff; font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit; letter-spacing: 0.3px; margin-top: 4px; }
+    .cancel-btn { width: 100%; padding: 14px; border: none; border-radius: 14px; background: var(--border); color: #aaa; font-size: 15px; font-weight: 600; cursor: pointer; font-family: inherit; margin-top: 8px; }
+    .danger-btn { width: 100%; padding: 13px; border: none; border-radius: 12px; background: rgba(255,107,107,0.15); color: var(--red); font-size: 14px; font-weight: 700; cursor: pointer; font-family: inherit; margin-top: 8px; }
+
+    /* Person/group detail page */
+    .detail-header {
+      background: linear-gradient(135deg, #14302C 0%, #15141F 100%);
+      border: 1px solid rgba(0,194,168,0.25);
+      border-radius: 20px; padding: 18px 20px; margin-bottom: 16px;
+    }
+    .detail-back {
+      background: none; border: none; color: var(--teal-light); font-size: 14px;
+      cursor: pointer; padding: 0; margin-bottom: 10px; font-family: inherit; font-weight: 600;
+      display: flex; align-items: center; gap: 6px;
+    }
+    .detail-name { font-size: 22px; font-weight: 800; letter-spacing: -0.5px; }
+    .detail-bal { font-size: 28px; font-weight: 800; margin-top: 6px; letter-spacing: -0.5px; }
+    .detail-bal.pos { color: var(--green); }
+    .detail-bal.neg { color: var(--red); }
+    .detail-bal.zero { color: var(--text); }
+    .detail-summary { font-size: 12px; color: var(--muted); margin-top: 4px; }
+
+    .detail-actions { display: flex; gap: 8px; margin-top: 14px; }
+    .detail-action {
+      flex: 1; padding: 10px; border: none; border-radius: 12px;
+      background: var(--surface2); color: var(--text); font-size: 13px; font-weight: 600;
+      cursor: pointer; font-family: inherit;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .detail-action.primary { background: var(--teal); }
+    .detail-action.warn { color: var(--red); background: rgba(255,107,107,0.12); }
+
+    .txn-item { background: var(--surface); border-radius: 14px; padding: 12px 14px; margin-bottom: 8px; display: flex; align-items: center; gap: 12px; }
+    .txn-icon { width: 36px; height: 36px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+    .txn-icon.lent { background: rgba(74,222,128,0.15); color: var(--green); }
+    .txn-icon.borrowed { background: rgba(255,107,107,0.15); color: var(--red); }
+    .txn-icon.settle { background: rgba(157,143,255,0.15); color: #9D8FFF; }
+    .txn-icon.split { background: rgba(255,179,71,0.15); color: var(--amber); }
+    .txn-info { flex: 1; min-width: 0; }
+    .txn-note { font-size: 14px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .txn-meta { font-size: 11px; color: var(--dim); margin-top: 2px; }
+    .txn-amt { font-size: 14px; font-weight: 800; flex-shrink: 0; }
+    .txn-amt.pos { color: var(--green); }
+    .txn-amt.neg { color: var(--red); }
+    .txn-actions { display: flex; flex-direction: column; gap: 4px; align-items: flex-end; }
+    .txn-del {
+      background: rgba(255,107,107,0.15); border: none; border-radius: 6px;
+      color: var(--red); font-size: 11px; padding: 3px 6px; cursor: pointer;
+    }
+
+    /* Member selector */
+    .member-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 14px; max-height: 200px; overflow-y: auto; }
+    .member-chip {
+      padding: 10px 6px; border-radius: 10px; border: 2px solid var(--border);
+      background: var(--surface2); cursor: pointer; font-size: 12px; font-weight: 600;
+      color: var(--dim); text-align: center; font-family: inherit;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .member-chip.active { border-color: var(--teal); color: var(--teal); background: rgba(0,194,168,0.1); }
+
+    /* Toast */
+    .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: #2A2A3A; color: var(--text); border-radius: 12px; padding: 12px 20px; font-size: 13px; font-weight: 600; transition: transform 0.3s ease; z-index: 999; max-width: 90vw; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
+    .toast.show { transform: translateX(-50%) translateY(0); }
+
+    /* Settlement suggestion */
+    .settle-card {
+      background: linear-gradient(135deg, rgba(0,194,168,0.1), rgba(0,194,168,0.04));
+      border: 1px solid rgba(0,194,168,0.2);
+      border-radius: 14px; padding: 12px 14px; margin-bottom: 8px;
+      font-size: 13px; color: var(--text);
+    }
+    .settle-name { font-weight: 700; color: var(--teal-light); }
+
+    /* Login */
+    .login-overlay { position: fixed; inset: 0; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 32px 24px; z-index: 1000; }
+    .login-overlay.hidden { display: none; }
+    .login-logo { font-size: 64px; margin-bottom: 14px; }
+    .login-title { font-size: 32px; font-weight: 800; letter-spacing: -0.5px; background: linear-gradient(135deg, #fff 30%, var(--teal-light)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 8px; }
+    .login-tag { font-size: 14px; color: var(--muted); margin-bottom: 36px; text-align: center; }
+    .login-features { width: 100%; max-width: 320px; background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 32px; }
+    .login-feature { display: flex; align-items: flex-start; gap: 10px; font-size: 13px; color: var(--text); padding: 6px 0; }
+    .login-feature-icon { flex-shrink: 0; font-size: 16px; }
+    .google-btn { width: 100%; max-width: 320px; padding: 14px 18px; border: none; border-radius: 14px; background: #fff; color: #1f1f1f; font-size: 15px; font-weight: 600; cursor: pointer; font-family: inherit; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.3); }
+    .google-btn:disabled { opacity: 0.6; cursor: wait; }
+    .google-icon { width: 20px; height: 20px; }
+    .login-foot { margin-top: 24px; font-size: 11px; color: var(--dim); text-align: center; max-width: 320px; }
+    .login-error { margin-top: 16px; padding: 10px 14px; background: rgba(255,107,107,0.1); border: 1px solid rgba(255,107,107,0.3); border-radius: 10px; color: var(--red); font-size: 12px; text-align: center; max-width: 320px; display: none; word-break: break-word; }
+    .login-error.show { display: block; }
+
+    #appRoot.hidden { display: none; }
+    .boot-screen { position: fixed; inset: 0; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 1001; }
+    .boot-screen.hidden { display: none; }
+    .boot-logo { font-size: 48px; margin-bottom: 16px; }
+    .boot-text { color: var(--muted); font-size: 13px; }
+
+    /* Color avatars for people */
+    .avatar-color-0 { background: #FF6B6B; }
+    .avatar-color-1 { background: #4ECDC4; }
+    .avatar-color-2 { background: #FFE66D; color: #333; }
+    .avatar-color-3 { background: #A8E6CF; color: #333; }
+    .avatar-color-4 { background: #C9B1FF; }
+    .avatar-color-5 { background: #FFB347; color: #333; }
+    .avatar-color-6 { background: #87CEEB; color: #333; }
+    .avatar-color-7 { background: #FF8FAB; }
+    .avatar-color-8 { background: #7ED957; color: #333; }
+    .avatar-color-9 { background: #6D59FF; }
+  </style>
+</head>
+<body>
+
+<div class="boot-screen" id="bootScreen">
+  <div class="boot-logo">📒</div>
+  <div class="boot-text">Loading Hisaab…</div>
+</div>
+
+<div class="login-overlay hidden" id="loginOverlay">
+  <div class="login-logo">📒</div>
+  <div class="login-title">Hisaab</div>
+  <div class="login-tag">Lena dena, sab clear</div>
+
+  <div class="login-features">
+    <div class="login-feature"><span class="login-feature-icon">👥</span><span>Track who owes whom with friends & family</span></div>
+    <div class="login-feature"><span class="login-feature-icon">🎫</span><span>Split trip & event bills automatically</span></div>
+    <div class="login-feature"><span class="login-feature-icon">📤</span><span>Share clean summaries on WhatsApp</span></div>
+    <div class="login-feature"><span class="login-feature-icon">☁️</span><span>Synced across all your devices</span></div>
+  </div>
+
+  <button class="google-btn" id="googleSignInBtn" onclick="signInWithGoogle()">
+    <svg class="google-icon" viewBox="0 0 48 48"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.1 29.3 4 24 4 13 4 4 13 4 24s9 20 20 20 20-9 20-20c0-1.3-.1-2.3-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.1 7.9 3l5.7-5.7C34.1 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.3 35.3 26.8 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.3-2.3 4.3-4.2 5.7l6.2 5.2C40.9 35.4 44 30.1 44 24c0-1.3-.1-2.3-.4-3.5z"/></svg>
+    <span id="signInLabel">Sign in with Google</span>
+  </button>
+  <div class="login-foot">Your data is private. Only you can see it.</div>
+  <div class="login-error" id="loginError"></div>
+</div>
+
+<div id="appRoot" class="hidden">
+  <div class="glow"></div>
+  <div class="glow2"></div>
+
+  <div class="container">
+    <div class="header-bar">
+      <h1>📒 Hisaab</h1>
+      <div class="user-chip" id="userChip" onclick="toggleUserMenu(event)">
+        <span class="sync-status" id="syncStatus">☁ Synced</span>
+        <div class="avatar" id="userAvatar">U</div>
+        <div class="user-menu" id="userMenu">
+          <div class="menu-info" id="userEmail">user@gmail.com</div>
+          <div class="menu-item" onclick="exportBackup()">💾 Export Backup</div>
+          <div class="menu-item" onclick="triggerImport()">📂 Import Backup</div>
+          <div class="menu-item" onclick="signOutUser()" style="color: var(--red);">🚪 Sign out</div>
+        </div>
+      </div>
+    </div>
+    <p class="subtitle">Lena dena, sab clear</p>
+
+    <input type="file" id="importFile" accept=".json" onchange="importBackup(event)" style="display:none;" />
+
+    <!-- Dashboard -->
+    <div class="dash-card" id="dashCard">
+      <div class="dash-row">
+        <div class="dash-cell">
+          <div class="dash-label">You'll Get</div>
+          <div class="dash-val pos" id="totalGet">₹0</div>
+        </div>
+        <div class="dash-cell">
+          <div class="dash-label">You'll Give</div>
+          <div class="dash-val neg" id="totalGive">₹0</div>
+        </div>
+      </div>
+      <div class="net-pill">
+        <div class="net-label">Net Balance</div>
+        <div class="net-val" id="netBalance">₹0</div>
+      </div>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+      <button class="tab-btn active" id="tab-people" onclick="setMainTab('people')">👥 People</button>
+      <button class="tab-btn" id="tab-groups" onclick="setMainTab('groups')">🎫 Groups</button>
+    </div>
+
+    <!-- People view -->
+    <div id="peopleView">
+      <div class="section-head">
+        <div class="section-title">All People</div>
+        <button class="icon-btn" onclick="openAddPerson()" title="Add Person">+</button>
+      </div>
+      <div id="peopleList"></div>
+    </div>
+
+    <!-- Groups view -->
+    <div id="groupsView" style="display:none">
+      <div class="section-head">
+        <div class="section-title">Groups & Trips</div>
+        <button class="icon-btn" onclick="openAddGroup()" title="Add Group">+</button>
+      </div>
+      <div id="groupsList"></div>
+    </div>
+
+    <!-- Person Detail view -->
+    <div id="personDetailView" style="display:none">
+      <button class="detail-back" onclick="closeDetail()">‹ Back</button>
+      <div class="detail-header">
+        <div class="detail-name" id="personDetailName">Name</div>
+        <div class="detail-bal" id="personDetailBal">₹0</div>
+        <div class="detail-summary" id="personDetailSummary"></div>
+        <div class="detail-actions">
+          <button class="detail-action primary" onclick="openAddTxn('lent')">💸 You Lent</button>
+          <button class="detail-action" onclick="openAddTxn('borrowed')">📥 You Borrowed</button>
+        </div>
+        <div class="detail-actions" style="margin-top:8px;">
+          <button class="detail-action" onclick="openSettle()">✅ Settle</button>
+          <button class="detail-action" onclick="shareSummary()">📤 Share</button>
+        </div>
+      </div>
+      <div class="section-head">
+        <div class="section-title">Transaction History</div>
+      </div>
+      <div id="personTxnList"></div>
+      <button class="danger-btn" onclick="askDeletePerson()" style="margin-top:20px;">🗑 Delete this person</button>
+    </div>
+
+    <!-- Group Detail view -->
+    <div id="groupDetailView" style="display:none">
+      <button class="detail-back" onclick="closeDetail()">‹ Back</button>
+      <div class="detail-header">
+        <div class="detail-name" id="groupDetailName">Group</div>
+        <div class="detail-summary" id="groupDetailMembers" style="margin-top:8px;"></div>
+        <div class="detail-actions" style="margin-top:14px;">
+          <button class="detail-action primary" onclick="openAddSplit()">💰 Add Expense</button>
+          <button class="detail-action" onclick="shareGroupSummary()">📤 Share</button>
+        </div>
+      </div>
+
+      <div class="section-head">
+        <div class="section-title">Settlement Plan</div>
+      </div>
+      <div id="settlementPlan"></div>
+
+      <div class="section-head" style="margin-top:16px;">
+        <div class="section-title">Expenses</div>
+      </div>
+      <div id="groupTxnList"></div>
+      <button class="danger-btn" onclick="askDeleteGroup()" style="margin-top:20px;">🗑 Delete this group</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modals -->
+<div class="modal-back" id="modalBack" onclick="closeModalIfBack(event)">
+  <div class="modal" id="modal">
+    <div class="modal-handle"></div>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+  import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+  import { initializeFirestore, getFirestore, persistentLocalCache, persistentMultipleTabManager, doc, setDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+  // ===== Firebase config (shared with Kharcha) =====
+  const firebaseConfig = {
+    apiKey: "AIzaSyDAmsIt5zB-adaM-cl-pE8bkZDHDwVt5a4",
+    authDomain: "kharchrojka.firebaseapp.com",
+    projectId: "kharchrojka",
+    storageBucket: "kharchrojka.firebasestorage.app",
+    messagingSenderId: "112181742542",
+    appId: "1:112181742542:web:f13fd46d802c43864c799f"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  let db;
+  try {
+    db = initializeFirestore(app, { localCache: persistentLocalCache({ tabManager: persistentMultipleTabManager() }) });
+  } catch (e) {
+    console.warn('Persistent cache unavailable:', e);
+    db = getFirestore(app);
+  }
+
+  window.__firebase = { auth, db, doc, setDoc, onSnapshot, serverTimestamp, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut };
+  window.dispatchEvent(new Event('firebase-ready'));
+</script>
+
+<script>
+// ===== State =====
+let people = [];      // { id, name, colorIdx, createdAt }
+let groups = [];      // { id, name, memberIds, includeMe, createdAt }
+let transactions = []; // see model in comments
+
+let currentUser = null;
+let unsubscribeSnapshot = null;
+let saveTimer = null;
+let firstSnapshotReceived = false;
+
+let mainTab = 'people';
+let viewingPersonId = null;
+let viewingGroupId = null;
+
+// ===== Helpers =====
+function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
+
+function todayStr() {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+
+function formatINR(n) {
+  try { return new Intl.NumberFormat('en-IN', { style: 'currency', currency: 'INR', maximumFractionDigits: 0 }).format(Math.abs(n)); }
+  catch (e) { return '₹' + Math.round(Math.abs(n)).toLocaleString('en-IN'); }
+}
+
+function escapeHtml(str) {
+  if (str == null) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');
+}
+
+function showToast(msg) {
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  setTimeout(() => t.classList.remove('show'), 2200);
+}
+
+function getPerson(id) { return people.find(p => p.id === id); }
+function getGroup(id) { return groups.find(g => g.id === id); }
+
+function personInitial(name) { return (name || '?').trim().charAt(0).toUpperCase(); }
+
+function fmtDate(d) {
+  return new Date(d + 'T00:00:00').toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' });
+}
+
+// ===== Balance calculation =====
+// Positive = that person owes me; negative = I owe them
+function balanceWithPerson(personId) {
+  let bal = 0;
+  for (const t of transactions) {
+    if (t.kind === 'lent' && t.personId === personId) {
+      bal += t.amount;
+    } else if (t.kind === 'borrowed' && t.personId === personId) {
+      bal -= t.amount;
+    } else if (t.kind === 'settle' && t.personId === personId) {
+      // Settlement: positive amount means they paid me back (reduces what they owe)
+      // negative means I paid them back (reduces what I owe)
+      bal -= t.amount;
+    } else if (t.kind === 'split' && t.groupId) {
+      // Split: derive per-person delta within this group
+      const delta = personDeltaInSplit(t, personId);
+      bal += delta;
+    }
+  }
+  return Math.round(bal * 100) / 100;
+}
+
+// In a split txn, how much does `personId` owe me (positive) or I owe them (negative)?
+function personDeltaInSplit(t, personId) {
+  // t.paidById is 'me' or a personId
+  // t.splitAmong is array of ids (can include 'me' and personIds)
+  // splitMode: 'equal' divides equally; 'custom' uses t.shares object
+  const total = t.amount;
+  const among = t.splitAmong || [];
+  if (among.length === 0) return 0;
+
+  let shares = {};
+  if (t.splitMode === 'custom' && t.shares) {
+    shares = t.shares;
+  } else {
+    const per = total / among.length;
+    among.forEach(a => { shares[a] = per; });
+  }
+
+  const myShare = shares['me'] || 0;
+  const theirShare = shares[personId] || 0;
+
+  if (t.paidById === 'me') {
+    // I paid; each other participant owes me their share
+    return theirShare; // positive: they owe me
+  } else if (t.paidById === personId) {
+    // They paid; I owe my share
+    return -myShare; // negative
+  } else {
+    // Someone else paid — no direct effect between me & this person
+    return 0;
+  }
+}
+
+// All txns relevant to a person (including splits in groups where they're a member)
+function txnsForPerson(personId) {
+  return transactions.filter(t => {
+    if (t.personId === personId && (t.kind === 'lent' || t.kind === 'borrowed' || t.kind === 'settle')) return true;
+    if (t.kind === 'split' && (t.splitAmong || []).includes(personId)) return true;
+    return false;
+  }).slice().sort((a,b) => b.date.localeCompare(a.date) || (b.id||'').localeCompare(a.id||''));
+}
+
+function txnsForGroup(groupId) {
+  return transactions.filter(t => t.kind === 'split' && t.groupId === groupId)
+    .slice().sort((a,b) => b.date.localeCompare(a.date) || (b.id||'').localeCompare(a.id||''));
+}
+
+function totalGetAndGive() {
+  let get = 0, give = 0;
+  for (const p of people) {
+    const b = balanceWithPerson(p.id);
+    if (b > 0) get += b;
+    else if (b < 0) give += -b;
+  }
+  return { get, give, net: get - give };
+}
+
+// ===== Firebase wiring =====
+window.addEventListener('firebase-ready', () => {
+  const fb = window.__firebase;
+  fb.getRedirectResult(fb.auth).catch(err => console.warn('Redirect result:', err));
+  fb.onAuthStateChanged(fb.auth, (user) => {
+    if (user) { currentUser = user; onUserSignedIn(user); }
+    else { currentUser = null; onUserSignedOut(); }
+  });
+});
+
+function onUserSignedIn(user) {
+  document.getElementById('bootScreen').classList.add('hidden');
+  document.getElementById('loginOverlay').classList.add('hidden');
+  document.getElementById('appRoot').classList.remove('hidden');
+
+  document.getElementById('userEmail').textContent = user.email || user.displayName || 'Signed in';
+  const avatarEl = document.getElementById('userAvatar');
+  if (user.photoURL) avatarEl.innerHTML = `<img src="${user.photoURL}" alt="" referrerpolicy="no-referrer" />`;
+  else avatarEl.textContent = (user.displayName || user.email || 'U').charAt(0).toUpperCase();
+
+  setSyncStatus('syncing', '⟳ Loading…');
+  firstSnapshotReceived = false;
+  startCloudSync(user.uid);
+  render();
+}
+
+function onUserSignedOut() {
+  document.getElementById('bootScreen').classList.add('hidden');
+  document.getElementById('appRoot').classList.add('hidden');
+  document.getElementById('loginOverlay').classList.remove('hidden');
+  const btn = document.getElementById('googleSignInBtn'); if (btn) btn.disabled = false;
+  const label = document.getElementById('signInLabel'); if (label) label.textContent = 'Sign in with Google';
+  if (unsubscribeSnapshot) { unsubscribeSnapshot(); unsubscribeSnapshot = null; }
+}
+
+window.signInWithGoogle = async function() {
+  const fb = window.__firebase;
+  const btn = document.getElementById('googleSignInBtn');
+  const label = document.getElementById('signInLabel');
+  const errEl = document.getElementById('loginError');
+  errEl.classList.remove('show');
+  btn.disabled = true; label.textContent = 'Signing in…';
+  const provider = new fb.GoogleAuthProvider();
+  try {
+    await fb.signInWithPopup(fb.auth, provider);
+  } catch (err) {
+    if (['auth/popup-blocked','auth/popup-closed-by-user','auth/cancelled-popup-request','auth/operation-not-supported-in-this-environment','auth/web-storage-unsupported'].includes(err.code)) {
+      try { await fb.signInWithRedirect(fb.auth, provider); return; }
+      catch (e2) { errEl.textContent = 'Sign-in failed: ' + (e2.message || e2.code); errEl.classList.add('show'); }
+    } else {
+      errEl.textContent = 'Sign-in failed: ' + (err.message || err.code);
+      errEl.classList.add('show');
+    }
+    btn.disabled = false; label.textContent = 'Sign in with Google';
+  }
+};
+
+window.signOutUser = async function() {
+  try { await window.__firebase.signOut(window.__firebase.auth);
+    people = []; groups = []; transactions = []; showToast('Signed out');
+  } catch (err) { showToast('Sign out failed'); }
+};
+
+function setSyncStatus(state, label) {
+  const el = document.getElementById('syncStatus');
+  if (!el) return;
+  el.className = 'sync-status ' + state;
+  el.textContent = label;
+}
+
+window.addEventListener('online', () => { if (currentUser) setSyncStatus('syncing', '⟳ Reconnecting…'); });
+window.addEventListener('offline', () => setSyncStatus('offline', '⚠ Offline'));
+
+function startCloudSync(uid) {
+  const fb = window.__firebase;
+  const ref = fb.doc(fb.db, 'hisaab_users', uid);
+  unsubscribeSnapshot = fb.onSnapshot(ref, { includeMetadataChanges: true }, (snap) => {
+    const fromCache = snap.metadata.fromCache;
+    const pending = snap.metadata.hasPendingWrites;
+    if (snap.exists()) {
+      const data = snap.data();
+      people = Array.isArray(data.people) ? data.people : [];
+      groups = Array.isArray(data.groups) ? data.groups : [];
+      transactions = Array.isArray(data.transactions) ? data.transactions : [];
+      firstSnapshotReceived = true;
+      render();
+      if (!navigator.onLine) setSyncStatus('offline', '⚠ Offline');
+      else if (pending) setSyncStatus('syncing', '⟳ Syncing…');
+      else setSyncStatus('', '☁ Synced');
+    } else {
+      if (!firstSnapshotReceived) {
+        firstSnapshotReceived = true;
+        // Empty cloud doc — initialise empty
+        people = []; groups = []; transactions = [];
+        pushToCloud();
+        render();
+        showToast('Welcome! Add your first person 👥');
+      }
+    }
+  }, (err) => {
+    console.error('Snapshot error:', err);
+    setSyncStatus('error', '⚠ Sync error');
+    showToast('Sync error: ' + (err.code || err.message));
+  });
+}
+
+async function pushToCloud() {
+  if (!currentUser) return;
+  const fb = window.__firebase;
+  setSyncStatus('syncing', '⟳ Saving…');
+  try {
+    const ref = fb.doc(fb.db, 'hisaab_users', currentUser.uid);
+    await fb.setDoc(ref, { people, groups, transactions, updatedAt: fb.serverTimestamp(), version: 1 }, { merge: true });
+    setSyncStatus(navigator.onLine ? '' : 'offline', navigator.onLine ? '☁ Synced' : '⚠ Offline (queued)');
+  } catch (err) {
+    console.error('Push error:', err);
+    setSyncStatus('error', '⚠ Save error');
+    showToast('Save failed: ' + (err.code || err.message));
+  }
+}
+
+function scheduleSave() {
+  try {
+    localStorage.setItem('hisaab_people', JSON.stringify(people));
+    localStorage.setItem('hisaab_groups', JSON.stringify(groups));
+    localStorage.setItem('hisaab_transactions', JSON.stringify(transactions));
+  } catch (e) {}
+  if (saveTimer) clearTimeout(saveTimer);
+  saveTimer = setTimeout(pushToCloud, 350);
+}
+
+// ===== User menu =====
+window.toggleUserMenu = function(e) { e.stopPropagation(); document.getElementById('userMenu').classList.toggle('open'); };
+document.addEventListener('click', () => { const m = document.getElementById('userMenu'); if (m) m.classList.remove('open'); });
+window.triggerImport = function() { document.getElementById('importFile').click(); document.getElementById('userMenu').classList.remove('open'); };
+
+window.exportBackup = function() {
+  document.getElementById('userMenu').classList.remove('open');
+  const data = { people, groups, transactions, exportDate: new Date().toISOString(), version: 1 };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `hisaab-backup-${todayStr()}.json`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  showToast('Backup exported ✓');
+};
+
+window.importBackup = function(event) {
+  const file = event.target.files[0]; if (!file) return;
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const data = JSON.parse(e.target.result);
+      if (!Array.isArray(data.people) || !Array.isArray(data.transactions)) throw new Error('Bad format');
+      people = data.people;
+      groups = data.groups || [];
+      transactions = data.transactions;
+      scheduleSave(); render();
+      showToast('Backup restored ✓');
+    } catch (err) { showToast('Invalid backup file'); }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+};
+
+// ===== Main tabs =====
+window.setMainTab = function(t) {
+  mainTab = t;
+  document.getElementById('tab-people').classList.toggle('active', t === 'people');
+  document.getElementById('tab-groups').classList.toggle('active', t === 'groups');
+  document.getElementById('peopleView').style.display = t === 'people' ? 'block' : 'none';
+  document.getElementById('groupsView').style.display = t === 'groups' ? 'block' : 'none';
+  closeDetail();
+};
+
+window.closeDetail = function() {
+  viewingPersonId = null; viewingGroupId = null;
+  document.getElementById('personDetailView').style.display = 'none';
+  document.getElementById('groupDetailView').style.display = 'none';
+  document.getElementById('peopleView').style.display = mainTab === 'people' ? 'block' : 'none';
+  document.getElementById('groupsView').style.display = mainTab === 'groups' ? 'block' : 'none';
+  document.getElementById('dashCard').style.display = 'block';
+  document.querySelector('.tabs').style.display = 'flex';
+};
+
+window.openPerson = function(id) {
+  viewingPersonId = id; viewingGroupId = null;
+  document.getElementById('peopleView').style.display = 'none';
+  document.getElementById('groupsView').style.display = 'none';
+  document.getElementById('groupDetailView').style.display = 'none';
+  document.getElementById('personDetailView').style.display = 'block';
+  document.getElementById('dashCard').style.display = 'none';
+  document.querySelector('.tabs').style.display = 'none';
+  renderPersonDetail();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
+window.openGroup = function(id) {
+  viewingGroupId = id; viewingPersonId = null;
+  document.getElementById('peopleView').style.display = 'none';
+  document.getElementById('groupsView').style.display = 'none';
+  document.getElementById('personDetailView').style.display = 'none';
+  document.getElementById('groupDetailView').style.display = 'block';
+  document.getElementById('dashCard').style.display = 'none';
+  document.querySelector('.tabs').style.display = 'none';
+  renderGroupDetail();
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+};
+
+// ===== Modal helpers =====
+function openModal(html) {
+  document.getElementById('modalBody').innerHTML = html;
+  document.getElementById('modalBack').classList.add('open');
+}
+window.closeModal = function() { document.getElementById('modalBack').classList.remove('open'); };
+window.closeModalIfBack = function(e) { if (e.target.id === 'modalBack') closeModal(); };
+
+// ===== Add Person =====
+window.openAddPerson = function() {
+  openModal(`
+    <div class="modal-title">Add Person</div>
+    <div class="modal-sub">A friend, family member, or roommate</div>
+    <label class="form-label">Name</label>
+    <input class="form-input" id="newPersonName" placeholder="e.g. Ravi" autofocus />
+    <button class="submit-btn" onclick="savePerson()">Add Person</button>
+    <button class="cancel-btn" onclick="closeModal()">Cancel</button>
+  `);
+  setTimeout(() => document.getElementById('newPersonName')?.focus(), 100);
+};
+
+window.savePerson = function() {
+  const name = document.getElementById('newPersonName').value.trim();
+  if (!name) { showToast('Enter a name'); return; }
+  if (people.some(p => p.name.toLowerCase() === name.toLowerCase())) {
+    showToast('A person with this name already exists'); return;
+  }
+  const colorIdx = people.length % 10;
+  people.unshift({ id: uid(), name, colorIdx, createdAt: Date.now() });
+  scheduleSave(); render();
+  closeModal();
+  showToast(`Added ${name} ✓`);
+};
+
+window.askDeletePerson = function() {
+  const p = getPerson(viewingPersonId); if (!p) return;
+  const bal = balanceWithPerson(p.id);
+  const txns = txnsForPerson(p.id);
+  let warning = '';
+  if (txns.length > 0) {
+    warning = `<div style="background:rgba(255,107,107,0.1);border:1px solid rgba(255,107,107,0.3);border-radius:10px;padding:12px;font-size:12px;color:var(--red);margin-bottom:14px;">⚠️ ${txns.length} transaction(s) will also be deleted. Current balance: ${bal === 0 ? '₹0' : (bal > 0 ? 'they owe ' : 'you owe ') + formatINR(bal)}.</div>`;
+  }
+  openModal(`
+    <div class="modal-title">Delete ${escapeHtml(p.name)}?</div>
+    <div class="modal-sub">This can't be undone.</div>
+    ${warning}
+    <button class="submit-btn" style="background:var(--red);" onclick="doDeletePerson()">Delete Forever</button>
+    <button class="cancel-btn" onclick="closeModal()">Cancel</button>
+  `);
+};
+
+window.doDeletePerson = function() {
+  const id = viewingPersonId;
+  // Remove direct txns
+  transactions = transactions.filter(t => {
+    if (t.personId === id && (t.kind === 'lent' || t.kind === 'borrowed' || t.kind === 'settle')) return false;
+    return true;
+  });
+  // Remove from any group splits' splitAmong
+  transactions = transactions.map(t => {
+    if (t.kind === 'split' && t.splitAmong && t.splitAmong.includes(id)) {
+      return { ...t, splitAmong: t.splitAmong.filter(x => x !== id) };
+    }
+    return t;
+  });
+  // Remove from group memberships
+  groups = groups.map(g => ({ ...g, memberIds: (g.memberIds || []).filter(x => x !== id) }));
+  // Remove person
+  people = people.filter(p => p.id !== id);
+  scheduleSave();
+  closeModal();
+  closeDetail();
+  showToast('Person deleted');
+};
+
+// ===== Add Transaction (lent/borrowed) =====
+let pendingKind = 'lent';
+window.openAddTxn = function(kind) {
+  pendingKind = kind;
+  const p = getPerson(viewingPersonId); if (!p) return;
+  const isLent = kind === 'lent';
+  openModal(`
+    <div class="modal-title">${isLent ? 'You Lent' : 'You Borrowed'}</div>
+    <div class="modal-sub">${isLent ? `Money you gave to ${escapeHtml(p.name)}` : `Money ${escapeHtml(p.name)} gave to you`}</div>
+
+    <label class="form-label">Amount (₹)</label>
+    <input class="form-input" id="txnAmount" placeholder="0" inputmode="numeric" type="number" />
+
+    <label class="form-label">Date</label>
+    <input class="form-input" id="txnDate" type="date" value="${todayStr()}" />
+
+    <label class="form-label">Note (optional)</label>
+    <input class="form-input" id="txnNote" placeholder="e.g. Movie ticket, Dinner" />
+
+    <button class="submit-btn" onclick="saveTxn()">${isLent ? 'Save' : 'Save'}</button>
+    <button class="cancel-btn" onclick="closeModal()">Cancel</button>
+  `);
+  setTimeout(() => document.getElementById('txnAmount')?.focus(), 100);
+};
+
+window.saveTxn = function() {
+  const amount = parseFloat(document.getElementById('txnAmount').value);
+  if (!amount || amount <= 0) { showToast('Enter a valid amount'); return; }
+  const date = document.getElementById('txnDate').value || todayStr();
+  const note = document.getElementById('txnNote').value.trim();
+  transactions.unshift({
+    id: uid(), kind: pendingKind, personId: viewingPersonId,
+    amount, date, note, createdAt: Date.now()
+  });
+  scheduleSave(); render();
+  closeModal();
+  showToast(pendingKind === 'lent' ? 'Lent recorded ✓' : 'Borrowed recorded ✓');
+};
+
+// ===== Settle =====
+window.openSettle = function() {
+  const p = getPerson(viewingPersonId); if (!p) return;
+  const bal = balanceWithPerson(p.id);
+  if (bal === 0) { showToast('Already settled — nothing to clear'); return; }
+  const owedBy = bal > 0 ? 'they owe' : 'you owe';
+  openModal(`
+    <div class="modal-title">Settle with ${escapeHtml(p.name)}</div>
+    <div class="modal-sub">Currently ${owedBy} ${formatINR(bal)}</div>
+
+    <label class="form-label">Settlement Amount (₹)</label>
+    <input class="form-input" id="settleAmount" type="number" inputmode="numeric" value="${Math.abs(bal)}" />
+
+    <label class="form-label">Date</label>
+    <input class="form-input" id="settleDate" type="date" value="${todayStr()}" />
+
+    <label class="form-label">Note (optional)</label>
+    <input class="form-input" id="settleNote" placeholder="${bal > 0 ? 'Cash received' : 'Cash paid back'}" />
+
+    <button class="submit-btn" onclick="saveSettle(${bal > 0 ? 1 : -1})">Mark as Settled</button>
+    <button class="cancel-btn" onclick="closeModal()">Cancel</button>
+  `);
+};
+
+window.saveSettle = function(sign) {
+  const raw = parseFloat(document.getElementById('settleAmount').value);
+  if (!raw || raw <= 0) { showToast('Enter a valid amount'); return; }
+  const date = document.getElementById('settleDate').value || todayStr();
+  const note = document.getElementById('settleNote').value.trim() || (sign > 0 ? 'Settled (received)' : 'Settled (paid back)');
+  // Store as signed amount: positive sign means they paid me back (reduces what they owe)
+  transactions.unshift({
+    id: uid(), kind: 'settle', personId: viewingPersonId,
+    amount: raw * sign, date, note, createdAt: Date.now()
+  });
+  scheduleSave(); render();
+  closeModal();
+  showToast('Settlement recorded ✓');
+};
+
+window.deleteTxn = function(txnId) {
+  if (!confirm('Delete this transaction?')) return;
+  transactions = transactions.filter(t => t.id !== txnId);
+  scheduleSave(); render();
+  showToast('Transaction deleted');
+};
+
+// ===== Groups =====
+window.openAddGroup = function() {
+  if (people.length === 0) {
+    openModal(`
+      <div class="modal-title">Add people first</div>
+      <div class="modal-sub">You need at least one person to create a group.</div>
+      <button class="submit-btn" onclick="closeModal();setMainTab('people');openAddPerson()">Add Person</button>
+      <button class="cancel-btn" onclick="closeModal()">Cancel</button>
+    `);
+    return;
+  }
+  const memberChips = people.map(p =>
+    `<div class="member-chip" data-pid="${p.id}" onclick="toggleMemberChip(this)">${escapeHtml(p.name)}</div>`
+  ).join('');
+  openModal(`
+    <div class="modal-title">New Group / Trip</div>
+    <div class="modal-sub">e.g. Goa Trip, Office Diwali, Roommate Expenses</div>
+
+    <label class="form-label">Group Name</label>
+    <input class="form-input" id="newGroupName" placeholder="e.g. Goa Trip Dec 2026" />
+
+    <label class="form-label">Select Members</label>
+    <div class="member-grid">${memberChips}</div>
+
+    <button class="submit-btn" onclick="saveGroup()">Create Group</button>
+    <button class="cancel-btn" onclick="closeModal()">Cancel</button>
+  `);
+};
+
+window.toggleMemberChip = function(el) { el.classList.toggle('active'); };
+
+window.saveGroup = function() {
+  const name = document.getElementById('newGroupName').value.trim();
+  if (!name) { showToast('Enter a group name'); return; }
+  const chips = document.querySelectorAll('.member-chip.active');
+  const memberIds = Array.from(chips).map(c => c.dataset.pid);
+  if (memberIds.length === 0) { showToast('Select at least one member'); return; }
+  groups.unshift({ id: uid(), name, memberIds, includeMe: true, createdAt: Date.now() });
+  scheduleSave(); render();
+  closeModal();
+  showToast(`Group "${name}" created ✓`);
+};
+
+window.askDeleteGroup = function() {
+  const g = getGroup(viewingGroupId); if (!g) return;
+  const txns = txnsForGroup(g.id);
+  const warning = txns.length > 0
+    ? `<div style="background:rgba(255,107,107,0.1);border:1px solid rgba(255,107,107,0.3);border-radius:10px;padding:12px;font-size:12px;color:var(--red);margin-bottom:14px;">⚠️ ${txns.length} expense(s) in this group will also be deleted, affecting balances.</div>`
+    : '';
+  openModal(`
+    <div class="modal-title">Delete ${escapeHtml(g.name)}?</div>
+    <div class="modal-sub">This can't be undone.</div>
+    ${warning}
+    <button class="submit-btn" style="background:var(--red);" onclick="doDeleteGroup()">Delete Forever</button>
+    <button class="cancel-btn" onclick="closeModal()">Cancel</button>
+  `);
+};
+
+window.doDeleteGroup = function() {
+  const id = viewingGroupId;
+  transactions = transactions.filter(t => !(t.kind === 'split' && t.groupId === id));
+  groups = groups.filter(g => g.id !== id);
+  scheduleSave();
+  closeModal();
+  closeDetail();
+  showToast('Group deleted');
+};
+
+// ===== Add Split =====
+window.openAddSplit = function() {
+  const g = getGroup(viewingGroupId); if (!g) return;
+  const allParticipants = ['me', ...g.memberIds];
+  const payerOptions = allParticipants.map(id =>
+    `<option value="${id}">${id === 'me' ? 'Me' : escapeHtml(getPerson(id)?.name || '?')}</option>`
+  ).join('');
+  const splitChips = allParticipants.map(id =>
+    `<div class="member-chip active" data-pid="${id}" onclick="toggleMemberChip(this)">${id === 'me' ? 'Me' : escapeHtml(getPerson(id)?.name || '?')}</div>`
+  ).join('');
+  openModal(`
+    <div class="modal-title">Add Expense</div>
+    <div class="modal-sub">Splits the amount among selected members</div>
+
+    <label class="form-label">Description</label>
+    <input class="form-input" id="splitNote" placeholder="e.g. Dinner at Cafe" />
+
+    <label class="form-label">Amount (₹)</label>
+    <input class="form-input" id="splitAmount" type="number" inputmode="numeric" placeholder="0" />
+
+    <label class="form-label">Date</label>
+    <input class="form-input" id="splitDate" type="date" value="${todayStr()}" />
+
+    <label class="form-label">Paid by</label>
+    <select class="form-select" id="splitPaidBy">${payerOptions}</select>
+
+    <label class="form-label">Split equally among</label>
+    <div class="member-grid">${splitChips}</div>
+
+    <button class="submit-btn" onclick="saveSplit()">Save Expense</button>
+    <button class="cancel-btn" onclick="closeModal()">Cancel</button>
+  `);
+};
+
+window.saveSplit = function() {
+  const amount = parseFloat(document.getElementById('splitAmount').value);
+  if (!amount || amount <= 0) { showToast('Enter a valid amount'); return; }
+  const note = document.getElementById('splitNote').value.trim() || 'Expense';
+  const date = document.getElementById('splitDate').value || todayStr();
+  const paidById = document.getElementById('splitPaidBy').value;
+  const chips = document.querySelectorAll('.member-chip.active');
+  const splitAmong = Array.from(chips).map(c => c.dataset.pid);
+  if (splitAmong.length === 0) { showToast('Select at least one person to split among'); return; }
+  transactions.unshift({
+    id: uid(), kind: 'split', groupId: viewingGroupId,
+    amount, date, note, paidById, splitAmong, splitMode: 'equal',
+    createdAt: Date.now()
+  });
+  scheduleSave(); render();
+  closeModal();
+  showToast('Expense added ✓');
+};
+
+// ===== Settlement plan algorithm =====
+// Compute per-person net within a group (positive = they owe the group / negative = group owes them)
+// Then greedily settle (largest creditor with largest debtor)
+function computeGroupSettlement(groupId) {
+  const g = getGroup(groupId); if (!g) return [];
+  const participants = new Set(['me']);
+  g.memberIds.forEach(id => participants.add(id));
+
+  // For each split in group, distribute net effects
+  const netByPerson = {};
+  participants.forEach(id => netByPerson[id] = 0);
+
+  txnsForGroup(groupId).forEach(t => {
+    const total = t.amount;
+    const among = t.splitAmong || [];
+    if (among.length === 0) return;
+    const per = total / among.length;
+    // The payer paid `total`, so net +total
+    if (netByPerson[t.paidById] !== undefined) netByPerson[t.paidById] += total;
+    // Each participant in split owes `per` (net -per)
+    among.forEach(a => {
+      if (netByPerson[a] !== undefined) netByPerson[a] -= per;
+    });
+  });
+
+  // Now positive = group owes them; negative = they owe the group
+  const creditors = []; // { id, amount }
+  const debtors = [];
+  for (const id of Object.keys(netByPerson)) {
+    const v = Math.round(netByPerson[id] * 100) / 100;
+    if (v > 0.01) creditors.push({ id, amount: v });
+    else if (v < -0.01) debtors.push({ id, amount: -v });
+  }
+  creditors.sort((a,b) => b.amount - a.amount);
+  debtors.sort((a,b) => b.amount - a.amount);
+
+  const transfers = [];
+  let i = 0, j = 0;
+  while (i < debtors.length && j < creditors.length) {
+    const give = Math.min(debtors[i].amount, creditors[j].amount);
+    transfers.push({ from: debtors[i].id, to: creditors[j].id, amount: Math.round(give * 100) / 100 });
+    debtors[i].amount -= give;
+    creditors[j].amount -= give;
+    if (debtors[i].amount < 0.01) i++;
+    if (creditors[j].amount < 0.01) j++;
+  }
+  return transfers;
+}
+
+// ===== Render: Dashboard =====
+function renderDash() {
+  const { get, give, net } = totalGetAndGive();
+  document.getElementById('totalGet').textContent = formatINR(get);
+  document.getElementById('totalGive').textContent = formatINR(give);
+  const netEl = document.getElementById('netBalance');
+  if (net > 0) { netEl.textContent = '+' + formatINR(net); netEl.style.color = 'var(--green)'; }
+  else if (net < 0) { netEl.textContent = '-' + formatINR(net); netEl.style.color = 'var(--red)'; }
+  else { netEl.textContent = '₹0'; netEl.style.color = 'var(--text)'; }
+}
+
+// ===== Render: People list =====
+function renderPeopleList() {
+  const list = document.getElementById('peopleList');
+  if (people.length === 0) {
+    list.innerHTML = `<div class="empty">
+      <div class="empty-icon">👥</div>
+      <div class="empty-text">No people yet</div>
+      <div class="empty-hint">Tap + to add someone you owe or who owes you</div>
+    </div>`;
+    return;
+  }
+  // Sort: people with non-zero balance first (largest |bal| descending), then zero
+  const withBal = people.map(p => ({ p, b: balanceWithPerson(p.id) }));
+  withBal.sort((a, b) => Math.abs(b.b) - Math.abs(a.b));
+  list.innerHTML = withBal.map(({ p, b }) => {
+    const cls = b > 0 ? 'pos' : (b < 0 ? 'neg' : 'zero');
+    const label = b > 0 ? 'owes you' : (b < 0 ? 'you owe' : 'settled');
+    const amt = b === 0 ? '₹0' : (b > 0 ? '+' : '-') + formatINR(b);
+    return `<div class="list-card" onclick="openPerson('${p.id}')">
+      <div class="list-icon avatar-color-${p.colorIdx || 0}">${personInitial(p.name)}</div>
+      <div class="list-info">
+        <div class="list-name">${escapeHtml(p.name)}</div>
+        <div class="list-meta">${label}</div>
+      </div>
+      <div class="list-amt ${cls}">${amt}</div>
+    </div>`;
+  }).join('');
+}
+
+// ===== Render: Groups list =====
+function renderGroupsList() {
+  const list = document.getElementById('groupsList');
+  if (groups.length === 0) {
+    list.innerHTML = `<div class="empty">
+      <div class="empty-icon">🎫</div>
+      <div class="empty-text">No groups yet</div>
+      <div class="empty-hint">Create a group for trips or shared expenses</div>
+    </div>`;
+    return;
+  }
+  list.innerHTML = groups.map(g => {
+    const txnCount = txnsForGroup(g.id).length;
+    const total = txnsForGroup(g.id).reduce((s,t) => s + t.amount, 0);
+    return `<div class="list-card" onclick="openGroup('${g.id}')">
+      <div class="list-icon" style="background:rgba(0,194,168,0.15);color:var(--teal);">🎫</div>
+      <div class="list-info">
+        <div class="list-name">${escapeHtml(g.name)}</div>
+        <div class="list-meta">${g.memberIds.length + 1} members · ${txnCount} expense${txnCount !== 1 ? 's' : ''}</div>
+      </div>
+      <div class="list-amt zero">${formatINR(total)}</div>
+    </div>`;
+  }).join('');
+}
+
+// ===== Render: Person Detail =====
+function renderPersonDetail() {
+  const p = getPerson(viewingPersonId); if (!p) { closeDetail(); return; }
+  const bal = balanceWithPerson(p.id);
+  document.getElementById('personDetailName').textContent = p.name;
+  const balEl = document.getElementById('personDetailBal');
+  if (bal > 0) { balEl.textContent = '+' + formatINR(bal); balEl.className = 'detail-bal pos'; }
+  else if (bal < 0) { balEl.textContent = '-' + formatINR(bal); balEl.className = 'detail-bal neg'; }
+  else { balEl.textContent = '₹0'; balEl.className = 'detail-bal zero'; }
+  document.getElementById('personDetailSummary').textContent =
+    bal > 0 ? `${p.name} owes you` : (bal < 0 ? `You owe ${p.name}` : 'All settled');
+
+  const txns = txnsForPerson(p.id);
+  const list = document.getElementById('personTxnList');
+  if (txns.length === 0) {
+    list.innerHTML = `<div class="empty"><div class="empty-icon">🧾</div><div class="empty-text">No transactions yet</div></div>`;
+    return;
+  }
+  list.innerHTML = txns.map(t => renderPersonTxn(t, p.id)).join('');
+}
+
+function renderPersonTxn(t, personId) {
+  let icon, label, amtCls, amtStr, kindClass;
+  if (t.kind === 'lent') {
+    icon = '↗'; label = t.note || 'Lent'; kindClass = 'lent';
+    amtCls = 'pos'; amtStr = '+' + formatINR(t.amount);
+  } else if (t.kind === 'borrowed') {
+    icon = '↙'; label = t.note || 'Borrowed'; kindClass = 'borrowed';
+    amtCls = 'neg'; amtStr = '-' + formatINR(t.amount);
+  } else if (t.kind === 'settle') {
+    icon = '✓'; label = t.note || 'Settled'; kindClass = 'settle';
+    // settle amount sign: positive sign in stored amount means they paid me back (debit goes down)
+    // visually mark as a settlement
+    amtCls = t.amount > 0 ? 'pos' : 'neg';
+    amtStr = (t.amount > 0 ? '+' : '-') + formatINR(t.amount);
+  } else if (t.kind === 'split') {
+    const g = getGroup(t.groupId);
+    icon = '🎫'; label = (t.note || 'Expense') + (g ? ` · ${g.name}` : '');
+    kindClass = 'split';
+    const delta = personDeltaInSplit(t, personId);
+    amtCls = delta > 0 ? 'pos' : (delta < 0 ? 'neg' : 'zero');
+    amtStr = delta === 0 ? '—' : (delta > 0 ? '+' : '-') + formatINR(delta);
+  }
+  const canDelete = t.kind !== 'split'; // splits are deleted from group view
+  return `<div class="txn-item">
+    <div class="txn-icon ${kindClass}">${icon}</div>
+    <div class="txn-info">
+      <div class="txn-note">${escapeHtml(label)}</div>
+      <div class="txn-meta">${fmtDate(t.date)}</div>
+    </div>
+    <div class="txn-actions">
+      <div class="txn-amt ${amtCls}">${amtStr}</div>
+      ${canDelete ? `<button class="txn-del" onclick="deleteTxn('${t.id}')">delete</button>` : ''}
+    </div>
+  </div>`;
+}
+
+// ===== Render: Group Detail =====
+function renderGroupDetail() {
+  const g = getGroup(viewingGroupId); if (!g) { closeDetail(); return; }
+  document.getElementById('groupDetailName').textContent = g.name;
+  const memberNames = ['You', ...g.memberIds.map(id => getPerson(id)?.name || '?')].join(' · ');
+  document.getElementById('groupDetailMembers').textContent = memberNames;
+
+  const transfers = computeGroupSettlement(g.id);
+  const planEl = document.getElementById('settlementPlan');
+  if (transfers.length === 0) {
+    planEl.innerHTML = `<div class="settle-card">✅ Everyone's settled in this group</div>`;
+  } else {
+    planEl.innerHTML = transfers.map(t => {
+      const fromName = t.from === 'me' ? 'You' : (getPerson(t.from)?.name || '?');
+      const toName = t.to === 'me' ? 'you' : (getPerson(t.to)?.name || '?');
+      return `<div class="settle-card">
+        <span class="settle-name">${escapeHtml(fromName)}</span> ${t.from === 'me' ? 'pay' : 'pays'} <span class="settle-name">${escapeHtml(toName)}</span>
+        <strong style="float:right;color:var(--teal-light);">${formatINR(t.amount)}</strong>
+      </div>`;
+    }).join('');
+  }
+
+  const txns = txnsForGroup(g.id);
+  const list = document.getElementById('groupTxnList');
+  if (txns.length === 0) {
+    list.innerHTML = `<div class="empty"><div class="empty-icon">💰</div><div class="empty-text">No expenses yet</div></div>`;
+    return;
+  }
+  list.innerHTML = txns.map(t => {
+    const payerName = t.paidById === 'me' ? 'You' : (getPerson(t.paidById)?.name || '?');
+    const splitCount = (t.splitAmong || []).length;
+    return `<div class="txn-item">
+      <div class="txn-icon split">🎫</div>
+      <div class="txn-info">
+        <div class="txn-note">${escapeHtml(t.note || 'Expense')}</div>
+        <div class="txn-meta">${fmtDate(t.date)} · Paid by ${escapeHtml(payerName)} · Split ${splitCount}-way</div>
+      </div>
+      <div class="txn-actions">
+        <div class="txn-amt" style="color:var(--text);">${formatINR(t.amount)}</div>
+        <button class="txn-del" onclick="deleteTxn('${t.id}')">delete</button>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+// ===== Share summary =====
+window.shareSummary = function() {
+  const p = getPerson(viewingPersonId); if (!p) return;
+  const bal = balanceWithPerson(p.id);
+  const txns = txnsForPerson(p.id);
+  let text = `📒 Hisaab with ${p.name}\n(as on ${fmtDate(todayStr())})\n\n`;
+  if (txns.length === 0) {
+    text += 'No transactions yet.';
+  } else {
+    txns.slice().reverse().forEach(t => {
+      const d = fmtDate(t.date);
+      if (t.kind === 'lent') text += `${d} — ${t.note || 'Lent'}: ₹${t.amount} (I paid)\n`;
+      else if (t.kind === 'borrowed') text += `${d} — ${t.note || 'Borrowed'}: ₹${t.amount} (${p.name} paid)\n`;
+      else if (t.kind === 'settle') {
+        const direction = t.amount > 0 ? `${p.name} paid back` : 'I paid back';
+        text += `${d} — Settled: ₹${Math.abs(t.amount)} (${direction})\n`;
+      } else if (t.kind === 'split') {
+        const g = getGroup(t.groupId);
+        const delta = personDeltaInSplit(t, p.id);
+        if (delta !== 0) {
+          text += `${d} — ${t.note || 'Expense'}${g ? ` (${g.name})` : ''}: ₹${Math.abs(delta).toFixed(0)} ${delta > 0 ? `owed to me` : `I owe`}\n`;
+        }
+      }
+    });
+    text += `\n💰 Balance: `;
+    if (bal > 0) text += `${p.name} owes ₹${bal.toFixed(0)} ✨`;
+    else if (bal < 0) text += `I owe ${p.name} ₹${Math.abs(bal).toFixed(0)}`;
+    else text += `All clear ✅`;
+  }
+  shareOrCopy(text);
+};
+
+window.shareGroupSummary = function() {
+  const g = getGroup(viewingGroupId); if (!g) return;
+  const txns = txnsForGroup(g.id);
+  const transfers = computeGroupSettlement(g.id);
+  const memberNames = ['You', ...g.memberIds.map(id => getPerson(id)?.name || '?')].join(', ');
+  let text = `📒 ${g.name}\n(as on ${fmtDate(todayStr())})\nMembers: ${memberNames}\n\n`;
+
+  if (txns.length === 0) {
+    text += 'No expenses yet.';
+  } else {
+    text += '💰 Expenses:\n';
+    txns.slice().reverse().forEach(t => {
+      const payer = t.paidById === 'me' ? 'You' : (getPerson(t.paidById)?.name || '?');
+      const splitCount = (t.splitAmong || []).length;
+      text += `• ${fmtDate(t.date)} — ${t.note || 'Expense'}: ₹${t.amount.toFixed(0)} (paid by ${payer}, split ${splitCount}-way)\n`;
+    });
+    text += `\nTotal: ₹${txns.reduce((s,t) => s + t.amount, 0).toFixed(0)}\n\n`;
+    if (transfers.length === 0) {
+      text += '✅ Everyone is settled';
+    } else {
+      text += '🔄 Settlement Plan:\n';
+      transfers.forEach(t => {
+        const from = t.from === 'me' ? 'You' : (getPerson(t.from)?.name || '?');
+        const to = t.to === 'me' ? 'you' : (getPerson(t.to)?.name || '?');
+        text += `• ${from} → ${to}: ₹${t.amount.toFixed(0)}\n`;
+      });
+    }
+  }
+  shareOrCopy(text);
+};
+
+async function shareOrCopy(text) {
+  if (navigator.share) {
+    try {
+      await navigator.share({ text });
+      showToast('Shared ✓');
+      return;
+    } catch (e) {
+      if (e.name === 'AbortError') return;
+    }
+  }
+  // Fallback: copy to clipboard
+  try {
+    await navigator.clipboard.writeText(text);
+    showToast('Summary copied to clipboard');
+  } catch (e) {
+    // Last resort: show in a modal
+    openModal(`
+      <div class="modal-title">Summary</div>
+      <div class="modal-sub">Copy this text and share manually</div>
+      <textarea class="form-input" rows="12" style="resize:vertical;font-family:monospace;font-size:13px;" readonly>${escapeHtml(text)}</textarea>
+      <button class="cancel-btn" onclick="closeModal()">Close</button>
+    `);
+  }
+}
+
+// ===== Main render =====
+function render() {
+  renderDash();
+  renderPeopleList();
+  renderGroupsList();
+  if (viewingPersonId) renderPersonDetail();
+  if (viewingGroupId) renderGroupDetail();
+}
+
+// ===== PWA manifest =====
+(function() {
+  const manifest = {
+    name: "Hisaab",
+    short_name: "Hisaab",
+    description: "Lena dena, sab clear",
+    start_url: "./",
+    display: "standalone",
+    background_color: "#0F0F13",
+    theme_color: "#0F0F13",
+    orientation: "portrait",
+    icons: [
+      { src: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%2300C2A8'/><text y='.9em' font-size='62' x='12'>📒</text></svg>", sizes: "192x192", type: "image/svg+xml" },
+      { src: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%2300C2A8'/><text y='.9em' font-size='62' x='12'>📒</text></svg>", sizes: "512x512", type: "image/svg+xml" }
+    ]
+  };
+  try {
+    const blob = new Blob([JSON.stringify(manifest)], {type:'application/json'});
+    const url = URL.createObjectURL(blob);
+    document.getElementById('manifestPlaceholder').href = url;
+  } catch (e) {}
+})();
+
+// Boot timeout
+setTimeout(() => {
+  const boot = document.getElementById('bootScreen');
+  if (boot && !boot.classList.contains('hidden') && !currentUser) {
+    boot.classList.add('hidden');
+    document.getElementById('loginOverlay').classList.remove('hidden');
+    if (!window.__firebase) {
+      const err = document.getElementById('loginError');
+      err.textContent = 'Network slow. Connect to internet and reload.';
+      err.classList.add('show');
+    }
+  }
+}, 8000);
+
+window.addEventListener('load', () => {
+  setTimeout(() => window.scrollTo(0, 1), 0);
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js')
+      .then(reg => { setInterval(() => reg.update(), 30 * 60 * 1000); })
+      .catch(err => console.warn('SW registration failed:', err));
+  }
+});
+</script>
+</body>
+</html>
