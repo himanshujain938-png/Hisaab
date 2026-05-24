@@ -1,5 +1,5 @@
 // Hisaab Service Worker — caches app shell + Firebase SDK for offline use
-const CACHE_VERSION = 'hisaab-v1';
+const CACHE_VERSION = 'hisaab-v2';
 const APP_SHELL = ['./', './index.html'];
 const FIREBASE_URLS = [
   'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js',
