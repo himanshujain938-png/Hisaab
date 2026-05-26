@@ -20,6 +20,7 @@
       --border: #2A2A3A; --teal: #00C2A8; --teal-light: #4FE0CB;
       --red: #FF6B6B; --green: #4ADE80; --amber: #F59E0B;
       --text: #E8E8F0; --muted: #666680; --dim: #555568;
+      --purple: #9D8FFF;
     }
 
     html, body {
@@ -164,6 +165,7 @@
     .form-label { font-size: 11px; font-weight: 600; color: var(--muted); margin-bottom: 6px; display: block; text-transform: uppercase; letter-spacing: 0.5px; }
     .form-input { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; color: var(--text); font-size: 16px; padding: 12px 14px; outline: none; font-family: inherit; margin-bottom: 14px; -webkit-appearance: none; color-scheme: dark; }
     .form-input::placeholder { color: var(--dim); }
+    .form-input:focus { border-color: var(--teal); }
     .form-select { width: 100%; background: var(--surface2); border: 1px solid var(--border); border-radius: 12px; color: var(--text); font-size: 16px; padding: 12px 14px; outline: none; font-family: inherit; margin-bottom: 14px; -webkit-appearance: none; color-scheme: dark; }
 
     .kind-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
@@ -238,6 +240,79 @@
     }
     .member-chip.active { border-color: var(--teal); color: var(--teal); background: rgba(0,194,168,0.1); }
 
+    /* ======== PAYER CHIPS (multi-payer) ======== */
+    .payer-grid { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 10px; }
+    .payer-chip {
+      display: flex; flex-direction: column; align-items: center;
+      padding: 10px 12px; border-radius: 12px; border: 2px solid var(--border);
+      background: var(--surface2); cursor: pointer; font-size: 12px; font-weight: 600;
+      color: var(--dim); font-family: inherit; min-width: 72px; flex: 1;
+      transition: border-color 0.15s, background 0.15s;
+    }
+    .payer-chip.active { border-color: var(--teal); color: var(--teal); background: rgba(0,194,168,0.1); }
+    .payer-chip .payer-name { font-size: 13px; font-weight: 700; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 80px; }
+    .payer-chip .payer-amt { font-size: 11px; color: var(--muted); }
+    .payer-chip.active .payer-amt { color: var(--teal-light); }
+
+    .payer-mode-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+    .payer-mode-label { font-size: 11px; color: var(--muted); font-weight: 600; flex-shrink: 0; }
+    .payer-mode-select {
+      flex: 1; background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 10px; color: var(--text); font-size: 13px; padding: 8px 12px;
+      outline: none; font-family: inherit; color-scheme: dark;
+    }
+
+    /* Custom payer rows */
+    .payer-custom-rows { margin-bottom: 12px; }
+    .payer-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .payer-row-name { font-size: 13px; font-weight: 600; color: var(--text); flex: 1; }
+    .payer-row-input {
+      width: 100px; background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 10px; color: var(--text); font-size: 14px; padding: 8px 10px;
+      outline: none; font-family: inherit; text-align: right; color-scheme: dark;
+    }
+    .payer-row-input:focus { border-color: var(--teal); }
+
+    /* Validation bar */
+    .validation-bar {
+      border-radius: 10px; padding: 8px 12px; margin-bottom: 12px;
+      font-size: 12px; font-weight: 700; display: flex; align-items: center; gap: 8px;
+    }
+    .validation-bar.ok { background: rgba(74,222,128,0.1); color: var(--green); border: 1px solid rgba(74,222,128,0.25); }
+    .validation-bar.warn { background: rgba(245,158,11,0.1); color: var(--amber); border: 1px solid rgba(245,158,11,0.25); }
+    .validation-bar.err { background: rgba(255,107,107,0.1); color: var(--red); border: 1px solid rgba(255,107,107,0.25); }
+
+    /* ======== SPLIT MODE BUTTONS ======== */
+    .split-mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+    .split-mode-btn {
+      padding: 10px 8px; border: 2px solid var(--border);
+      background: var(--surface2); border-radius: 12px;
+      font-size: 12px; font-weight: 600; cursor: pointer;
+      color: var(--dim); font-family: inherit;
+      display: flex; align-items: center; justify-content: center; gap: 6px;
+    }
+    .split-mode-btn.active { border-color: var(--purple); color: var(--purple); background: rgba(157,143,255,0.1); }
+
+    /* Split input rows */
+    .split-input-rows { margin-bottom: 12px; }
+    .split-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; }
+    .split-row-name { font-size: 13px; font-weight: 600; color: var(--text); flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .split-row-preview { font-size: 11px; color: var(--muted); width: 50px; text-align: right; flex-shrink: 0; }
+    .split-row-input {
+      width: 90px; background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 10px; color: var(--text); font-size: 14px; padding: 8px 10px;
+      outline: none; font-family: inherit; text-align: right; color-scheme: dark; flex-shrink: 0;
+    }
+    .split-row-input:focus { border-color: var(--purple); }
+
+    /* Section divider inside modal */
+    .modal-section { border-top: 1px solid var(--border); margin: 14px -20px 14px; padding: 14px 20px 0; }
+    .modal-section-title { font-size: 12px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; display: flex; align-items: center; gap: 6px; }
+
+    /* Quick action row in header */
+    .quick-row { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; font-size: 12px; color: var(--muted); }
+    .quick-link { color: var(--teal-light); cursor: pointer; font-weight: 700; }
+
     /* Toast */
     .toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(80px); background: #2A2A3A; color: var(--text); border-radius: 12px; padding: 12px 20px; font-size: 13px; font-weight: 600; transition: transform 0.3s ease; z-index: 999; max-width: 90vw; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; box-shadow: 0 4px 20px rgba(0,0,0,0.4); }
     .toast.show { transform: translateX(-50%) translateY(0); }
@@ -307,6 +382,14 @@
     .avatar-color-7 { background: #FF8FAB; }
     .avatar-color-8 { background: #7ED957; color: #333; }
     .avatar-color-9 { background: #6D59FF; }
+
+    /* Payer badge on expense card */
+    .multi-payer-badge {
+      display: inline-flex; align-items: center; gap: 3px;
+      background: rgba(0,194,168,0.12); border-radius: 6px;
+      padding: 2px 6px; font-size: 10px; font-weight: 700;
+      color: var(--teal-light); margin-left: 4px;
+    }
   </style>
 </head>
 <body>
@@ -324,7 +407,7 @@
   <div class="login-features">
     <div class="login-feature"><span class="login-feature-icon">👥</span><span>Friends aur family ka hisaab rakho</span></div>
     <div class="login-feature"><span class="login-feature-icon">🎫</span><span>Trip aur party ke bills auto-split karo</span></div>
-    <div class="login-feature"><span class="login-feature-icon">📤</span><span>WhatsApp pe summary share karo</span></div>
+    <div class="login-feature"><span class="login-feature-icon">💸</span><span>Multi-payer &amp; flexible split support</span></div>
     <div class="login-feature"><span class="login-feature-icon">☁️</span><span>Sab devices pe sync</span></div>
   </div>
 
@@ -402,7 +485,7 @@
     <!-- Groups view -->
     <div id="groupsView" style="display:none">
       <div class="section-head">
-        <div class="section-title">Groups & Trips</div>
+        <div class="section-title">Groups &amp; Trips</div>
         <button class="icon-btn" onclick="openAddGroup()" title="Group Add Karo">+</button>
       </div>
       <div id="groupsList"></div>
@@ -472,7 +555,6 @@
   import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithRedirect, getRedirectResult, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
   import { initializeFirestore, getFirestore, persistentLocalCache, persistentMultipleTabManager, doc, setDoc, onSnapshot, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-  // ===== Firebase config (shared with Kharcha) =====
   const firebaseConfig = {
     apiKey: "AIzaSyDAmsIt5zB-adaM-cl-pE8bkZDHDwVt5a4",
     authDomain: "kharchrojka.firebaseapp.com",
@@ -498,9 +580,9 @@
 
 <script>
 // ===== State =====
-let people = [];      // { id, name, colorIdx, createdAt }
-let groups = [];      // { id, name, memberIds, includeMe, createdAt }
-let transactions = []; // see model in comments
+let people = [];
+let groups = [];
+let transactions = [];
 
 let currentUser = null;
 let isGuestMode = false;
@@ -538,15 +620,150 @@ function showToast(msg) {
 
 function getPerson(id) { return people.find(p => p.id === id); }
 function getGroup(id) { return groups.find(g => g.id === id); }
-
 function personInitial(name) { return (name || '?').trim().charAt(0).toUpperCase(); }
-
 function fmtDate(d) {
   return new Date(d + 'T00:00:00').toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' });
 }
 
+// ===== Data model helpers =====
+
+/**
+ * Normalise a split transaction to always use the `payers` array format.
+ * Old format: { paidById: 'me'|id, ... }
+ * New format: { payers: [{ id, amount }], ... }
+ * Also normalise splitMode: absent → 'equal'
+ */
+function normaliseSplit(t) {
+  if (t.kind !== 'split') return t;
+  let payers = t.payers;
+  if (!payers) {
+    // Legacy: single payer
+    payers = [{ id: t.paidById || 'me', amount: t.amount }];
+  }
+  const splitMode = t.splitMode || 'equal';
+  return { ...t, payers, splitMode };
+}
+
+/**
+ * Compute the final shares (₹ per person) for a split, given splitMode and raw share inputs.
+ * Returns { id: amount } map (only for people in splitAmong).
+ * rawShares: { id: number } — raw input values (amount/percent/shareCount depending on mode)
+ * among: [id, ...]
+ * total: number
+ * mode: 'equal'|'custom'|'percent'|'shares'
+ */
+function computeShares(mode, rawShares, among, total) {
+  if (!among || among.length === 0) return {};
+  const result = {};
+  if (mode === 'equal') {
+    const per = total / among.length;
+    among.forEach(id => { result[id] = Math.round(per * 100) / 100; });
+  } else if (mode === 'custom') {
+    among.forEach(id => { result[id] = parseFloat(rawShares[id] || 0) || 0; });
+  } else if (mode === 'percent') {
+    among.forEach(id => {
+      const pct = parseFloat(rawShares[id] || 0) || 0;
+      result[id] = Math.round(total * pct / 100 * 100) / 100;
+    });
+  } else if (mode === 'shares') {
+    const vals = among.map(id => parseFloat(rawShares[id] || 0) || 0);
+    const totalShares = vals.reduce((s, v) => s + v, 0);
+    if (totalShares === 0) {
+      among.forEach(id => { result[id] = total / among.length; });
+    } else {
+      among.forEach((id, i) => {
+        result[id] = Math.round(total * vals[i] / totalShares * 100) / 100;
+      });
+    }
+  }
+  return result;
+}
+
+/**
+ * In a split txn, how much does `personId` owe me (positive) or I owe them (negative)?
+ * Handles both old (paidById) and new (payers) formats.
+ */
+function personDeltaInSplit(rawT, personId) {
+  const t = normaliseSplit(rawT);
+  const total = t.amount;
+  const among = t.splitAmong || [];
+  if (among.length === 0) return 0;
+
+  // Get final ₹ shares
+  let finalShares;
+  if (t.splitMode === 'equal' || !t.splitMode) {
+    finalShares = computeShares('equal', {}, among, total);
+  } else {
+    // For custom/percent/shares — shares object stores already-computed ₹ amounts
+    finalShares = t.shares || computeShares('equal', {}, among, total);
+  }
+
+  const myShare = finalShares['me'] || 0;
+  const theirShare = finalShares[personId] || 0;
+
+  // Build payer map: { id: amount }
+  const payerMap = {};
+  (t.payers || []).forEach(p => { payerMap[p.id] = p.amount; });
+
+  const myPayment = payerMap['me'] || 0;
+  const theirPayment = payerMap[personId] || 0;
+
+  // Net delta = what personId owes me, given the payments and shares:
+  // If I paid more than my share, others owe me.
+  // delta for personId:
+  //   + (theirShare - theirPayment) if personId paid less than their share → they owe someone
+  //   The effect on ME specifically:
+  //     if personId owes the pool → I get my proportion of that? No.
+  //     We need a full settlement approach. Here we compute pairwise:
+  //
+  // Actually the correct calculation: settle globally (used in group settlement)
+  // For the person detail view, use the global net approach from computeGroupSettlement-style:
+  // person's net = theirPayment - theirShare (positive → group owes them; negative → they owe group)
+  // my net = myPayment - myShare
+  // Pairwise delta between me and personId:
+  //   this is approximated as: personId's net contribution RELATIVE to me
+  //   We use: if personId underpaid → they owe someone; I overpaid → I'm owed
+  //   Direct bilateral: personId owes me = theirShare - theirPayment (when positive)
+  //                                          minus my share of what they'd owe to others
+  //
+  // Simplest correct bilateral model: 
+  //   myNet = myPayment - myShare  (>0 means group owes me; <0 means I owe group)
+  //   theirNet = theirPayment - theirShare
+  // The portion of theirNet that flows to/from me:
+  //   If theirNet < 0 (they owe) and myNet > 0 (I'm owed), they pay me min(|theirNet|, myNet)
+  //   This is what the group settlement algorithm computes globally.
+  //   For bilateral display, we'll approximate: they owe me their share minus their payment,
+  //   weighted by my surplus as a fraction of total surplus.
+  //
+  // Practically for the person detail view: we show a rough bilateral delta.
+  // Full accuracy is in the group settlement plan. Here:
+  //   Return: theirShare - theirPayment (what they need to contribute net)
+  //           if I'm a net payer (myNet>0), they partly pay me.
+  //   Use same heuristic as original: payer pays full, splits are owed to payer.
+  //   For multi-payer: treat each payer separately.
+
+  // Accurate bilateral delta using the same min-flow approach as group settlement:
+  const myNet = myPayment - myShare;   // >0: pool owes me
+  const theirNet = theirPayment - theirShare; // >0: pool owes them
+
+  // If myNet > 0 and theirNet < 0: they owe me min(myNet, |theirNet|)
+  // If myNet < 0 and theirNet > 0: I owe them min(|myNet|, theirNet)
+  // If same sign: no direct exchange between us (they settle with someone else)
+  if (myNet > 0 && theirNet < 0) {
+    // They owe money to pool; I'm owed money — they (partly) pay me
+    const totalOwed = Math.abs(theirNet);
+    const totalSurplus = myNet; // my surplus
+    // They pay me proportionally (if there are other creditors too)
+    // Simple: they owe me min(|theirNet|, myNet) — this works when only 2 relevant parties
+    return Math.min(totalOwed, totalSurplus);
+  } else if (myNet < 0 && theirNet > 0) {
+    // I owe money; they're owed — I pay them (negative = I owe)
+    return -Math.min(Math.abs(myNet), theirNet);
+  }
+  return 0;
+}
+
 // ===== Balance calculation =====
-// Positive = that person owes me; negative = I owe them
 function balanceWithPerson(personId) {
   let bal = 0;
   for (const t of transactions) {
@@ -555,11 +772,8 @@ function balanceWithPerson(personId) {
     } else if (t.kind === 'borrowed' && t.personId === personId) {
       bal -= t.amount;
     } else if (t.kind === 'settle' && t.personId === personId) {
-      // Settlement: positive amount means they paid me back (reduces what they owe)
-      // negative means I paid them back (reduces what I owe)
       bal -= t.amount;
     } else if (t.kind === 'split' && t.groupId) {
-      // Split: derive per-person delta within this group
       const delta = personDeltaInSplit(t, personId);
       bal += delta;
     }
@@ -567,43 +781,15 @@ function balanceWithPerson(personId) {
   return Math.round(bal * 100) / 100;
 }
 
-// In a split txn, how much does `personId` owe me (positive) or I owe them (negative)?
-function personDeltaInSplit(t, personId) {
-  // t.paidById is 'me' or a personId
-  // t.splitAmong is array of ids (can include 'me' and personIds)
-  // splitMode: 'equal' divides equally; 'custom' uses t.shares object
-  const total = t.amount;
-  const among = t.splitAmong || [];
-  if (among.length === 0) return 0;
-
-  let shares = {};
-  if (t.splitMode === 'custom' && t.shares) {
-    shares = t.shares;
-  } else {
-    const per = total / among.length;
-    among.forEach(a => { shares[a] = per; });
-  }
-
-  const myShare = shares['me'] || 0;
-  const theirShare = shares[personId] || 0;
-
-  if (t.paidById === 'me') {
-    // I paid; each other participant owes me their share
-    return theirShare; // positive: they owe me
-  } else if (t.paidById === personId) {
-    // They paid; I owe my share
-    return -myShare; // negative
-  } else {
-    // Someone else paid — no direct effect between me & this person
-    return 0;
-  }
-}
-
-// All txns relevant to a person (including splits in groups where they're a member)
 function txnsForPerson(personId) {
   return transactions.filter(t => {
     if (t.personId === personId && (t.kind === 'lent' || t.kind === 'borrowed' || t.kind === 'settle')) return true;
-    if (t.kind === 'split' && (t.splitAmong || []).includes(personId)) return true;
+    if (t.kind === 'split') {
+      const nt = normaliseSplit(t);
+      const inAmong = (nt.splitAmong || []).includes(personId);
+      const isPayer = (nt.payers || []).some(p => p.id === personId);
+      return inAmong || isPayer;
+    }
     return false;
   }).slice().sort((a,b) => b.date.localeCompare(a.date) || (b.id||'').localeCompare(a.id||''));
 }
@@ -682,22 +868,17 @@ function enterGuestMode() {
   }
   document.getElementById('menuSignIn').style.display = 'flex';
   document.getElementById('menuSignOut').textContent = '🔁 Sign In pe switch karo';
-
   document.getElementById('userEmail').textContent = 'Guest (local only)';
   document.getElementById('userAvatar').innerHTML = '';
   document.getElementById('userAvatar').textContent = '👤';
   document.getElementById('userAvatar').style.background = 'var(--border)';
-
   setSyncStatus('guest', '👤 Guest');
 
-  // Load from localStorage
   try {
     people = JSON.parse(localStorage.getItem('hisaab_people') || '[]');
     groups = JSON.parse(localStorage.getItem('hisaab_groups') || '[]');
     transactions = JSON.parse(localStorage.getItem('hisaab_transactions') || '[]');
-  } catch (e) {
-    people = []; groups = []; transactions = [];
-  }
+  } catch (e) { people = []; groups = []; transactions = []; }
 
   render();
 }
@@ -748,16 +929,13 @@ window.signInWithGoogle = async function() {
 
 window.signOutUser = async function() {
   document.getElementById('userMenu').classList.remove('open');
-
   if (isGuestMode) {
-    // Switch from guest to sign-in flow — keep local data so it can migrate on sign-in
     localStorage.removeItem('hisaab_guest_mode');
     isGuestMode = false;
     document.getElementById('appRoot').classList.add('hidden');
     document.getElementById('loginOverlay').classList.remove('hidden');
     return;
   }
-
   try { await window.__firebase.signOut(window.__firebase.auth);
     people = []; groups = []; transactions = []; showToast('Sign out ho gaye');
   } catch (err) { showToast('Sign out fail ho gaya'); }
@@ -798,26 +976,19 @@ function startCloudSync(uid) {
     } else {
       if (!firstSnapshotReceived) {
         firstSnapshotReceived = true;
-        // No cloud doc yet — first-time sign-in. Check if user had guest data locally and migrate it.
         let localPeople = [], localGroups = [], localTxns = [];
         try {
           localPeople = JSON.parse(localStorage.getItem('hisaab_people') || '[]');
           localGroups = JSON.parse(localStorage.getItem('hisaab_groups') || '[]');
           localTxns = JSON.parse(localStorage.getItem('hisaab_transactions') || '[]');
         } catch (e) {}
-
-        if (Array.isArray(localPeople) && Array.isArray(localGroups) && Array.isArray(localTxns) &&
-            (localPeople.length > 0 || localTxns.length > 0)) {
-          // Migrate guest data
+        if (Array.isArray(localPeople) && (localPeople.length > 0 || localTxns.length > 0)) {
           people = localPeople; groups = localGroups; transactions = localTxns;
-          pushToCloud();
-          render();
+          pushToCloud(); render();
           showToast(`Migrate ho gaya: ${localPeople.length} log, ${localTxns.length} transaction ✓`);
         } else {
-          // Truly new user
           people = []; groups = []; transactions = [];
-          pushToCloud();
-          render();
+          pushToCloud(); render();
           showToast('Welcome! Pehla banda add karo 👥');
         }
       }
@@ -830,16 +1001,13 @@ function startCloudSync(uid) {
 }
 
 async function pushToCloud() {
-  if (isGuestMode) {
-    setSyncStatus('guest', '👤 Guest');
-    return;
-  }
+  if (isGuestMode) { setSyncStatus('guest', '👤 Guest'); return; }
   if (!currentUser) return;
   const fb = window.__firebase;
   setSyncStatus('syncing', '⟳ Save ho raha…');
   try {
     const ref = fb.doc(fb.db, 'hisaab_users', currentUser.uid);
-    await fb.setDoc(ref, { people, groups, transactions, updatedAt: fb.serverTimestamp(), version: 1 }, { merge: true });
+    await fb.setDoc(ref, { people, groups, transactions, updatedAt: fb.serverTimestamp(), version: 2 }, { merge: true });
     setSyncStatus(navigator.onLine ? '' : 'offline', navigator.onLine ? '☁ Sync ho gaya' : '⚠ Offline (queued)');
   } catch (err) {
     console.error('Push error:', err);
@@ -854,12 +1022,7 @@ function scheduleSave() {
     localStorage.setItem('hisaab_groups', JSON.stringify(groups));
     localStorage.setItem('hisaab_transactions', JSON.stringify(transactions));
   } catch (e) {}
-
-  if (isGuestMode) {
-    setSyncStatus('guest', '👤 Guest');
-    return;
-  }
-
+  if (isGuestMode) { setSyncStatus('guest', '👤 Guest'); return; }
   if (saveTimer) clearTimeout(saveTimer);
   saveTimer = setTimeout(pushToCloud, 350);
 }
@@ -871,7 +1034,7 @@ window.triggerImport = function() { document.getElementById('importFile').click(
 
 window.exportBackup = function() {
   document.getElementById('userMenu').classList.remove('open');
-  const data = { people, groups, transactions, exportDate: new Date().toISOString(), version: 1 };
+  const data = { people, groups, transactions, exportDate: new Date().toISOString(), version: 2 };
   const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
   const a = document.createElement('a');
   a.href = URL.createObjectURL(blob);
@@ -888,9 +1051,7 @@ window.importBackup = function(event) {
     try {
       const data = JSON.parse(e.target.result);
       if (!Array.isArray(data.people) || !Array.isArray(data.transactions)) throw new Error('Bad format');
-      people = data.people;
-      groups = data.groups || [];
-      transactions = data.transactions;
+      people = data.people; groups = data.groups || []; transactions = data.transactions;
       scheduleSave(); render();
       showToast('Backup restore ho gaya ✓');
     } catch (err) { showToast('Galat backup file'); }
@@ -975,8 +1136,7 @@ window.savePerson = function() {
   people.unshift(newPerson);
   scheduleSave(); render();
   closeModal();
-  showToast(`${name} add ho gaya ✓ — ab transaction likho`);
-  // Auto-open the new person's detail so transaction buttons are immediately visible
+  showToast(`${name} add ho gaya ✓`);
   setTimeout(() => openPerson(newPerson.id), 200);
 };
 
@@ -999,21 +1159,17 @@ window.askDeletePerson = function() {
 
 window.doDeletePerson = function() {
   const id = viewingPersonId;
-  // Remove direct txns
   transactions = transactions.filter(t => {
     if (t.personId === id && (t.kind === 'lent' || t.kind === 'borrowed' || t.kind === 'settle')) return false;
     return true;
   });
-  // Remove from any group splits' splitAmong
   transactions = transactions.map(t => {
     if (t.kind === 'split' && t.splitAmong && t.splitAmong.includes(id)) {
       return { ...t, splitAmong: t.splitAmong.filter(x => x !== id) };
     }
     return t;
   });
-  // Remove from group memberships
   groups = groups.map(g => ({ ...g, memberIds: (g.memberIds || []).filter(x => x !== id) }));
-  // Remove person
   people = people.filter(p => p.id !== id);
   scheduleSave();
   closeModal();
@@ -1030,16 +1186,12 @@ window.openAddTxn = function(kind) {
   openModal(`
     <div class="modal-title">${isLent ? 'Tumne Diye' : 'Tumne Liye'}</div>
     <div class="modal-sub">${isLent ? `Paise jo aapne ${escapeHtml(p.name)} ko diye` : `Paise jo ${escapeHtml(p.name)} ne aapko diye`}</div>
-
     <label class="form-label">Kitne paise (₹)</label>
     <input class="form-input" id="txnAmount" placeholder="0" inputmode="numeric" type="number" />
-
     <label class="form-label">Date</label>
     <input class="form-input" id="txnDate" type="date" value="${todayStr()}" />
-
     <label class="form-label">Note (optional)</label>
     <input class="form-input" id="txnNote" placeholder="jaise: Movie ticket, Dinner" />
-
     <button class="submit-btn" onclick="saveTxn()">Save Karo</button>
     <button class="cancel-btn" onclick="closeModal()">Cancel</button>
   `);
@@ -1051,10 +1203,7 @@ window.saveTxn = function() {
   if (!amount || amount <= 0) { showToast('Sahi amount likho'); return; }
   const date = document.getElementById('txnDate').value || todayStr();
   const note = document.getElementById('txnNote').value.trim();
-  transactions.unshift({
-    id: uid(), kind: pendingKind, personId: viewingPersonId,
-    amount, date, note, createdAt: Date.now()
-  });
+  transactions.unshift({ id: uid(), kind: pendingKind, personId: viewingPersonId, amount, date, note, createdAt: Date.now() });
   scheduleSave(); render();
   closeModal();
   showToast(pendingKind === 'lent' ? 'Diye gaye record ho gaye ✓' : 'Liye gaye record ho gaye ✓');
@@ -1069,16 +1218,12 @@ window.openSettle = function() {
   openModal(`
     <div class="modal-title">${escapeHtml(p.name)} ke saath settle karo</div>
     <div class="modal-sub">Abhi ${owedBy} ${formatINR(bal)}</div>
-
     <label class="form-label">Settle Amount (₹)</label>
     <input class="form-input" id="settleAmount" type="number" inputmode="numeric" value="${Math.abs(bal)}" />
-
     <label class="form-label">Date</label>
     <input class="form-input" id="settleDate" type="date" value="${todayStr()}" />
-
     <label class="form-label">Note (optional)</label>
     <input class="form-input" id="settleNote" placeholder="${bal > 0 ? 'Cash mil gaya' : 'Cash de diya'}" />
-
     <button class="submit-btn" onclick="saveSettle(${bal > 0 ? 1 : -1})">Settle Mark Karo</button>
     <button class="cancel-btn" onclick="closeModal()">Cancel</button>
   `);
@@ -1089,11 +1234,7 @@ window.saveSettle = function(sign) {
   if (!raw || raw <= 0) { showToast('Sahi amount likho'); return; }
   const date = document.getElementById('settleDate').value || todayStr();
   const note = document.getElementById('settleNote').value.trim() || (sign > 0 ? 'Settled (mila)' : 'Settled (diya)');
-  // Store as signed amount: positive sign means they paid me back (reduces what they owe)
-  transactions.unshift({
-    id: uid(), kind: 'settle', personId: viewingPersonId,
-    amount: raw * sign, date, note, createdAt: Date.now()
-  });
+  transactions.unshift({ id: uid(), kind: 'settle', personId: viewingPersonId, amount: raw * sign, date, note, createdAt: Date.now() });
   scheduleSave(); render();
   closeModal();
   showToast('Settle record ho gaya ✓');
@@ -1123,13 +1264,10 @@ window.openAddGroup = function() {
   openModal(`
     <div class="modal-title">Naya Group / Trip</div>
     <div class="modal-sub">jaise: Goa Trip, Office Diwali, Roommate Kharcha</div>
-
     <label class="form-label">Group ka Naam</label>
     <input class="form-input" id="newGroupName" placeholder="jaise: Goa Trip Dec 2026" />
-
     <label class="form-label">Members Select Karo</label>
     <div class="member-grid">${memberChips}</div>
-
     <button class="submit-btn" onclick="saveGroup()">Group Banao</button>
     <button class="cancel-btn" onclick="closeModal()">Cancel</button>
   `);
@@ -1148,7 +1286,6 @@ window.saveGroup = function() {
   scheduleSave(); render();
   closeModal();
   showToast(`Group "${name}" ban gaya ✓`);
-  // Auto-open so user sees the Kharcha Add Karo button
   setTimeout(() => openGroup(newGroup.id), 200);
 };
 
@@ -1156,7 +1293,7 @@ window.askDeleteGroup = function() {
   const g = getGroup(viewingGroupId); if (!g) return;
   const txns = txnsForGroup(g.id);
   const warning = txns.length > 0
-    ? `<div style="background:rgba(255,107,107,0.1);border:1px solid rgba(255,107,107,0.3);border-radius:10px;padding:12px;font-size:12px;color:var(--red);margin-bottom:14px;">⚠️ Is group ke ${txns.length} kharche bhi delete ho jayenge, balance pe asar padega.</div>`
+    ? `<div style="background:rgba(255,107,107,0.1);border:1px solid rgba(255,107,107,0.3);border-radius:10px;padding:12px;font-size:12px;color:var(--red);margin-bottom:14px;">⚠️ Is group ke ${txns.length} kharche bhi delete ho jayenge.</div>`
     : '';
   openModal(`
     <div class="modal-title">${escapeHtml(g.name)} ko delete karein?</div>
@@ -1171,97 +1308,510 @@ window.doDeleteGroup = function() {
   const id = viewingGroupId;
   transactions = transactions.filter(t => !(t.kind === 'split' && t.groupId === id));
   groups = groups.filter(g => g.id !== id);
-  scheduleSave();
-  closeModal();
-  closeDetail();
+  scheduleSave(); closeModal(); closeDetail();
   showToast('Group delete ho gaya');
 };
 
-// ===== Add Split =====
+// ===================================================================
+// ===== NEW: Add Split Modal with Multi-Payer + Flexible Split =====
+// ===================================================================
+
+// State for the split modal
+const splitState = {
+  total: 0,
+  payerIds: [],       // active payer IDs
+  payerMode: 'equal', // 'equal' | 'custom'
+  payerRaw: {},       // { id: amount } — only used in custom payer mode
+  splitAmong: [],     // active splitAmong IDs
+  splitMode: 'equal', // 'equal' | 'custom' | 'percent' | 'shares'
+  splitRaw: {},       // { id: raw input value }
+  allParticipants: [] // ['me', ...memberIds]
+};
+
 window.openAddSplit = function() {
   const g = getGroup(viewingGroupId); if (!g) return;
   const allParticipants = ['me', ...g.memberIds];
-  const payerOptions = allParticipants.map(id =>
-    `<option value="${id}">${id === 'me' ? 'Maine' : escapeHtml(getPerson(id)?.name || '?')}</option>`
+  splitState.allParticipants = allParticipants;
+  // Defaults: me pays, everyone splits equally
+  splitState.payerIds = ['me'];
+  splitState.payerMode = 'equal';
+  splitState.payerRaw = {};
+  splitState.splitAmong = [...allParticipants];
+  splitState.splitMode = 'equal';
+  splitState.splitRaw = {};
+  splitState.total = 0;
+
+  renderSplitModal();
+};
+
+function participantName(id) {
+  return id === 'me' ? 'Main' : (getPerson(id)?.name || '?');
+}
+function participantNameAap(id) {
+  return id === 'me' ? 'Aap' : (getPerson(id)?.name || '?');
+}
+
+function renderSplitModal() {
+  const g = getGroup(viewingGroupId); if (!g) return;
+  const all = splitState.allParticipants;
+
+  // ---- PAYER CHIPS ----
+  const payerChips = all.map(id => {
+    const active = splitState.payerIds.includes(id);
+    const amt = getPayerDisplayAmt(id);
+    return `<div class="payer-chip${active ? ' active' : ''}" data-pid="${id}" onclick="togglePayer('${id}')">
+      <div class="payer-name">${escapeHtml(participantName(id))}</div>
+      <div class="payer-amt">${active ? formatINR(amt) : '—'}</div>
+    </div>`;
+  }).join('');
+
+  // Payer mode toggle (only if 2+ payers)
+  const showPayerMode = splitState.payerIds.length >= 2;
+  const payerModeHtml = showPayerMode ? `
+    <div class="payer-mode-row">
+      <span class="payer-mode-label">PAISE KAISA DIYE:</span>
+      <select class="payer-mode-select" id="payerModeSelect" onchange="setPayerMode(this.value)">
+        <option value="equal"${splitState.payerMode==='equal'?' selected':''}>Barabar barabar</option>
+        <option value="custom"${splitState.payerMode==='custom'?' selected':''}>Custom amount</option>
+      </select>
+    </div>` : '';
+
+  // Custom payer input rows
+  const showPayerInputs = showPayerMode && splitState.payerMode === 'custom';
+  const payerInputRows = showPayerInputs ? `
+    <div class="payer-custom-rows" id="payerInputRows">
+      ${splitState.payerIds.map(id => {
+        const val = splitState.payerRaw[id] || '';
+        return `<div class="payer-row">
+          <div class="payer-row-name">${escapeHtml(participantName(id))}</div>
+          <input class="payer-row-input" type="number" inputmode="decimal" placeholder="₹0"
+            value="${val}" data-pid="${id}" oninput="onPayerInput(this)" />
+        </div>`;
+      }).join('')}
+    </div>` : '';
+
+  // Payer validation bar
+  const payerVal = getPayerValidation();
+  const payerValHtml = `<div class="validation-bar ${payerVal.cls}" id="payerValidation">${payerVal.msg}</div>`;
+
+  // ---- SPLIT AMONG CHIPS ----
+  const splitChips = all.map(id => {
+    const active = splitState.splitAmong.includes(id);
+    return `<div class="member-chip${active ? ' active' : ''}" data-pid="${id}" onclick="toggleSplitAmong('${id}')">${escapeHtml(participantName(id))}</div>`;
+  }).join('');
+
+  // ---- SPLIT MODE BUTTONS ----
+  const splitModes = [
+    { key: 'equal', icon: '⚖️', label: 'Barabar' },
+    { key: 'custom', icon: '✏️', label: 'Custom ₹' },
+    { key: 'percent', icon: '%', label: 'Percent' },
+    { key: 'shares', icon: '🔢', label: 'Hissa' },
+  ];
+  const splitModeBtns = splitModes.map(m =>
+    `<button class="split-mode-btn${splitState.splitMode===m.key?' active':''}" onclick="setSplitMode('${m.key}')">${m.icon} ${m.label}</button>`
   ).join('');
-  const splitChips = allParticipants.map(id =>
-    `<div class="member-chip active" data-pid="${id}" onclick="toggleMemberChip(this)">${id === 'me' ? 'Main' : escapeHtml(getPerson(id)?.name || '?')}</div>`
-  ).join('');
+
+  // ---- SPLIT INPUT ROWS (non-equal modes) ----
+  const showSplitInputs = splitState.splitMode !== 'equal';
+  const splitInputRows = showSplitInputs ? `
+    <div class="split-input-rows" id="splitInputRows">
+      ${splitState.splitAmong.map(id => {
+        const rawVal = splitState.splitRaw[id] !== undefined ? splitState.splitRaw[id] : '';
+        const previewAmt = getSplitPreview(id);
+        const placeholder = splitState.splitMode === 'percent' ? '0%' : splitState.splitMode === 'shares' ? 'Hissa' : '₹0';
+        return `<div class="split-row">
+          <div class="split-row-name">${escapeHtml(participantName(id))}</div>
+          <div class="split-row-preview" id="splitPreview_${id}">${previewAmt}</div>
+          <input class="split-row-input" type="number" inputmode="decimal" placeholder="${placeholder}"
+            value="${rawVal}" data-pid="${id}" oninput="onSplitInput(this)" />
+        </div>`;
+      }).join('')}
+    </div>` : '';
+
+  // Split validation bar
+  const splitVal = getSplitValidation();
+  const splitValHtml = `<div class="validation-bar ${splitVal.cls}" id="splitValidation">${splitVal.msg}</div>`;
+
   openModal(`
-    <div class="modal-title">Kharcha Add Karo</div>
-    <div class="modal-sub">Selected members mein split ho jayega</div>
+    <div class="modal-title">💰 Kharcha Add Karo</div>
+    <div class="modal-sub">Multi-payer aur flexible split support</div>
 
     <label class="form-label">Kya ke liye</label>
     <input class="form-input" id="splitNote" placeholder="jaise: Cafe mein Dinner" />
 
     <label class="form-label">Total amount (₹)</label>
-    <input class="form-input" id="splitAmount" type="number" inputmode="numeric" placeholder="0" />
+    <input class="form-input" id="splitAmount" type="number" inputmode="decimal" placeholder="0"
+      oninput="onTotalInput(this)" />
 
     <label class="form-label">Date</label>
     <input class="form-input" id="splitDate" type="date" value="${todayStr()}" />
 
-    <label class="form-label">Kisne diye</label>
-    <select class="form-select" id="splitPaidBy">${payerOptions}</select>
+    <div class="modal-section">
+      <div class="modal-section-title">💸 Kisne diye?</div>
+      <div class="payer-grid" id="payerGrid">${payerChips}</div>
+      ${payerModeHtml}
+      ${payerInputRows}
+      ${payerValHtml}
+    </div>
 
-    <label class="form-label">Kismein barabar split karna hai</label>
-    <div class="member-grid">${splitChips}</div>
+    <div class="modal-section">
+      <div class="modal-section-title">🔀 Kismein split karna hai?
+        <span style="margin-left:auto;display:flex;gap:6px;">
+          <span class="quick-link" onclick="selectAllSplit()">Sab</span>
+          <span style="color:var(--border)">|</span>
+          <span class="quick-link" onclick="clearAllSplit()">Clear</span>
+        </span>
+      </div>
+      <div class="member-grid" id="splitGrid">${splitChips}</div>
+
+      <div class="form-label" style="margin-bottom:8px;">SPLIT TARIKA</div>
+      <div class="split-mode-grid">${splitModeBtns}</div>
+
+      ${splitInputRows}
+      ${splitValHtml}
+    </div>
 
     <button class="submit-btn" onclick="saveSplit()">Kharcha Save Karo</button>
     <button class="cancel-btn" onclick="closeModal()">Cancel</button>
   `);
+  setTimeout(() => document.getElementById('splitNote')?.focus(), 100);
+}
+
+// ---- Payer helpers ----
+function getPayerDisplayAmt(id) {
+  if (!splitState.payerIds.includes(id)) return 0;
+  const total = splitState.total;
+  if (!total) return 0;
+  if (splitState.payerMode === 'custom') return parseFloat(splitState.payerRaw[id] || 0) || 0;
+  return total / splitState.payerIds.length;
+}
+
+function getPayerValidation() {
+  const total = splitState.total;
+  if (splitState.payerIds.length === 0) return { cls: 'err', msg: '❌ Kam se kam ek payer chuno' };
+  if (!total) return { cls: 'warn', msg: '💡 Total amount bhi likho' };
+  if (splitState.payerMode === 'equal' || splitState.payerIds.length < 2) {
+    return { cls: 'ok', msg: `✅ ${escapeHtml(splitState.payerIds.map(participantName).join(', '))} — ${formatINR(total / splitState.payerIds.length)} each` };
+  }
+  const sum = splitState.payerIds.reduce((s, id) => s + (parseFloat(splitState.payerRaw[id] || 0) || 0), 0);
+  const diff = Math.round((total - sum) * 100) / 100;
+  if (Math.abs(diff) < 1) return { cls: 'ok', msg: `✅ Payer total = ${formatINR(total)} ✓` };
+  if (diff > 0) return { cls: 'err', msg: `⚠ Baaki assign karo: ${formatINR(diff)}` };
+  return { cls: 'err', msg: `⚠ ${formatINR(Math.abs(diff))} zyada ho gaya` };
+}
+
+function getSplitValidation() {
+  const total = splitState.total;
+  const among = splitState.splitAmong;
+  if (among.length === 0) return { cls: 'err', msg: '❌ Kam se kam ek banda chuno' };
+  if (!total) return { cls: 'warn', msg: '💡 Total amount bhi likho' };
+  if (splitState.splitMode === 'equal') {
+    const per = total / among.length;
+    return { cls: 'ok', msg: `✅ ${formatINR(per)} each — ${among.length} log` };
+  }
+  if (splitState.splitMode === 'percent') {
+    const sum = among.reduce((s, id) => s + (parseFloat(splitState.splitRaw[id] || 0) || 0), 0);
+    const diff = Math.round((100 - sum) * 10) / 10;
+    if (Math.abs(diff) < 0.1) return { cls: 'ok', msg: `✅ 100% assign ho gaya ✓` };
+    if (diff > 0) return { cls: 'err', msg: `⚠ ${diff}% baaki hai assign karna` };
+    return { cls: 'err', msg: `⚠ ${Math.abs(diff)}% zyada ho gaya` };
+  }
+  if (splitState.splitMode === 'custom') {
+    const sum = among.reduce((s, id) => s + (parseFloat(splitState.splitRaw[id] || 0) || 0), 0);
+    const diff = Math.round((total - sum) * 100) / 100;
+    if (Math.abs(diff) < 1) return { cls: 'ok', msg: `✅ ${formatINR(total)} assign ho gaya ✓` };
+    if (diff > 0) return { cls: 'err', msg: `⚠ Baaki: ${formatINR(diff)} assign karo` };
+    return { cls: 'err', msg: `⚠ ${formatINR(Math.abs(diff))} zyada` };
+  }
+  if (splitState.splitMode === 'shares') {
+    const totalShares = among.reduce((s, id) => s + (parseFloat(splitState.splitRaw[id] || 0) || 0), 0);
+    if (totalShares === 0) return { cls: 'warn', msg: '💡 Hissa (share count) daalo' };
+    return { cls: 'ok', msg: `✅ Total ${totalShares} hisse — amounts auto-computed` };
+  }
+  return { cls: 'ok', msg: '' };
+}
+
+function getSplitPreview(id) {
+  const total = splitState.total;
+  if (!total) return '—';
+  const mode = splitState.splitMode;
+  const among = splitState.splitAmong;
+  if (mode === 'equal') return formatINR(total / among.length);
+  if (mode === 'custom') return formatINR(parseFloat(splitState.splitRaw[id] || 0) || 0);
+  if (mode === 'percent') {
+    const pct = parseFloat(splitState.splitRaw[id] || 0) || 0;
+    return formatINR(total * pct / 100);
+  }
+  if (mode === 'shares') {
+    const totalShares = among.reduce((s, sid) => s + (parseFloat(splitState.splitRaw[sid] || 0) || 0), 0);
+    if (!totalShares) return '—';
+    const myShares = parseFloat(splitState.splitRaw[id] || 0) || 0;
+    return formatINR(total * myShares / totalShares);
+  }
+  return '—';
+}
+
+// ---- Live update helpers (partial re-render) ----
+function refreshValidationBars() {
+  const pv = getPayerValidation();
+  const pvEl = document.getElementById('payerValidation');
+  if (pvEl) { pvEl.className = 'validation-bar ' + pv.cls; pvEl.textContent = pv.msg; }
+
+  const sv = getSplitValidation();
+  const svEl = document.getElementById('splitValidation');
+  if (svEl) { svEl.className = 'validation-bar ' + sv.cls; svEl.textContent = sv.msg; }
+}
+
+function refreshPayerChipAmounts() {
+  document.querySelectorAll('.payer-chip').forEach(chip => {
+    const id = chip.dataset.pid;
+    const amtEl = chip.querySelector('.payer-amt');
+    if (amtEl) {
+      const active = splitState.payerIds.includes(id);
+      amtEl.textContent = active ? formatINR(getPayerDisplayAmt(id)) : '—';
+    }
+  });
+}
+
+function refreshSplitPreviews() {
+  splitState.splitAmong.forEach(id => {
+    const el = document.getElementById('splitPreview_' + id);
+    if (el) el.textContent = getSplitPreview(id);
+  });
+}
+
+// ---- Event handlers ----
+window.onTotalInput = function(el) {
+  splitState.total = parseFloat(el.value) || 0;
+  refreshPayerChipAmounts();
+  refreshSplitPreviews();
+  refreshValidationBars();
 };
 
+window.togglePayer = function(id) {
+  const idx = splitState.payerIds.indexOf(id);
+  if (idx === -1) {
+    splitState.payerIds.push(id);
+  } else {
+    if (splitState.payerIds.length === 1) { showToast('Kam se kam ek payer chahiye'); return; }
+    splitState.payerIds.splice(idx, 1);
+    delete splitState.payerRaw[id];
+  }
+  // Re-render full modal (payer section changes)
+  const note = document.getElementById('splitNote')?.value || '';
+  const amt = document.getElementById('splitAmount')?.value || '';
+  const date = document.getElementById('splitDate')?.value || todayStr();
+  renderSplitModal();
+  setTimeout(() => {
+    const n = document.getElementById('splitNote'); if (n) n.value = note;
+    const a = document.getElementById('splitAmount'); if (a) a.value = amt;
+    const d = document.getElementById('splitDate'); if (d) d.value = date;
+  }, 0);
+};
+
+window.setPayerMode = function(mode) {
+  splitState.payerMode = mode;
+  // Re-render to show/hide input rows
+  const note = document.getElementById('splitNote')?.value || '';
+  const amt = document.getElementById('splitAmount')?.value || '';
+  const date = document.getElementById('splitDate')?.value || todayStr();
+  renderSplitModal();
+  setTimeout(() => {
+    const n = document.getElementById('splitNote'); if (n) n.value = note;
+    const a = document.getElementById('splitAmount'); if (a) a.value = amt;
+    const d = document.getElementById('splitDate'); if (d) d.value = date;
+  }, 0);
+};
+
+window.onPayerInput = function(el) {
+  const id = el.dataset.pid;
+  splitState.payerRaw[id] = el.value;
+  refreshValidationBars();
+};
+
+window.toggleSplitAmong = function(id) {
+  const idx = splitState.splitAmong.indexOf(id);
+  if (idx === -1) {
+    splitState.splitAmong.push(id);
+  } else {
+    if (splitState.splitAmong.length === 1) { showToast('Kam se kam ek banda chahiye'); return; }
+    splitState.splitAmong.splice(idx, 1);
+    delete splitState.splitRaw[id];
+  }
+  // Toggle chip UI
+  const chip = document.querySelector(`#splitGrid .member-chip[data-pid="${id}"]`);
+  if (chip) chip.classList.toggle('active', splitState.splitAmong.includes(id));
+  // Re-render split input rows and previews
+  const splitInputContainer = document.getElementById('splitInputRows');
+  if (splitInputContainer && splitState.splitMode !== 'equal') {
+    splitInputContainer.innerHTML = splitState.splitAmong.map(sid => {
+      const rawVal = splitState.splitRaw[sid] !== undefined ? splitState.splitRaw[sid] : '';
+      const previewAmt = getSplitPreview(sid);
+      const placeholder = splitState.splitMode === 'percent' ? '0%' : splitState.splitMode === 'shares' ? 'Hissa' : '₹0';
+      return `<div class="split-row">
+        <div class="split-row-name">${escapeHtml(participantName(sid))}</div>
+        <div class="split-row-preview" id="splitPreview_${sid}">${previewAmt}</div>
+        <input class="split-row-input" type="number" inputmode="decimal" placeholder="${placeholder}"
+          value="${rawVal}" data-pid="${sid}" oninput="onSplitInput(this)" />
+      </div>`;
+    }).join('');
+  }
+  refreshValidationBars();
+};
+
+window.selectAllSplit = function() {
+  splitState.splitAmong = [...splitState.allParticipants];
+  document.querySelectorAll('#splitGrid .member-chip').forEach(c => c.classList.add('active'));
+  refreshValidationBars();
+};
+
+window.clearAllSplit = function() {
+  // Keep at least one
+  splitState.splitAmong = [splitState.allParticipants[0]];
+  document.querySelectorAll('#splitGrid .member-chip').forEach((c, i) => c.classList.toggle('active', i === 0));
+  refreshValidationBars();
+};
+
+window.setSplitMode = function(mode) {
+  splitState.splitMode = mode;
+  splitState.splitRaw = {};
+  // Update button states
+  document.querySelectorAll('.split-mode-btn').forEach(btn => btn.classList.remove('active'));
+  event.target.closest('.split-mode-btn').classList.add('active');
+
+  // Show/hide input rows
+  const existingRows = document.getElementById('splitInputRows');
+  const svEl = document.getElementById('splitValidation');
+
+  if (mode === 'equal') {
+    if (existingRows) existingRows.remove();
+  } else {
+    const rowsHtml = splitState.splitAmong.map(id => {
+      const placeholder = mode === 'percent' ? '0%' : mode === 'shares' ? 'Hissa' : '₹0';
+      return `<div class="split-row">
+        <div class="split-row-name">${escapeHtml(participantName(id))}</div>
+        <div class="split-row-preview" id="splitPreview_${id}">—</div>
+        <input class="split-row-input" type="number" inputmode="decimal" placeholder="${placeholder}"
+          data-pid="${id}" oninput="onSplitInput(this)" />
+      </div>`;
+    }).join('');
+    const div = document.createElement('div');
+    div.className = 'split-input-rows'; div.id = 'splitInputRows';
+    div.innerHTML = rowsHtml;
+    if (existingRows) existingRows.replaceWith(div);
+    else if (svEl) svEl.before(div);
+  }
+  refreshValidationBars();
+};
+
+window.onSplitInput = function(el) {
+  const id = el.dataset.pid;
+  splitState.splitRaw[id] = el.value;
+  refreshSplitPreviews();
+  refreshValidationBars();
+};
+
+// ---- Save split ----
 window.saveSplit = function() {
-  const amount = parseFloat(document.getElementById('splitAmount').value);
-  if (!amount || amount <= 0) { showToast('Sahi amount likho'); return; }
-  const note = document.getElementById('splitNote').value.trim() || 'Kharcha';
-  const date = document.getElementById('splitDate').value || todayStr();
-  const paidById = document.getElementById('splitPaidBy').value;
-  const chips = document.querySelectorAll('.member-chip.active');
-  const splitAmong = Array.from(chips).map(c => c.dataset.pid);
-  if (splitAmong.length === 0) { showToast('Kam se kam ek banda chuno'); return; }
-  transactions.unshift({
+  const total = parseFloat(document.getElementById('splitAmount')?.value) || 0;
+  if (!total || total <= 0) { showToast('Sahi amount likho'); return; }
+  const note = document.getElementById('splitNote')?.value.trim() || 'Kharcha';
+  const date = document.getElementById('splitDate')?.value || todayStr();
+
+  // Validate payers
+  if (splitState.payerIds.length === 0) { showToast('Kam se kam ek payer chuno'); return; }
+  let payers = [];
+  if (splitState.payerMode === 'equal' || splitState.payerIds.length < 2) {
+    const each = total / splitState.payerIds.length;
+    payers = splitState.payerIds.map(id => ({ id, amount: Math.round(each * 100) / 100 }));
+  } else {
+    payers = splitState.payerIds.map(id => ({ id, amount: parseFloat(splitState.payerRaw[id] || 0) || 0 }));
+    const payerSum = payers.reduce((s, p) => s + p.amount, 0);
+    if (Math.abs(payerSum - total) >= 1) { showToast('Payer amounts ka total ₹' + total + ' hona chahiye'); return; }
+  }
+
+  // Validate split
+  const among = splitState.splitAmong;
+  if (among.length === 0) { showToast('Kam se kam ek banda split mein chuno'); return; }
+  const mode = splitState.splitMode;
+  let finalShares = {};
+
+  if (mode === 'equal') {
+    finalShares = computeShares('equal', {}, among, total);
+  } else if (mode === 'custom') {
+    finalShares = computeShares('custom', splitState.splitRaw, among, total);
+    const sum = Object.values(finalShares).reduce((s, v) => s + v, 0);
+    if (Math.abs(sum - total) >= 1) { showToast('Custom amounts ka total ₹' + total + ' hona chahiye'); return; }
+  } else if (mode === 'percent') {
+    const pctSum = among.reduce((s, id) => s + (parseFloat(splitState.splitRaw[id] || 0) || 0), 0);
+    if (Math.abs(pctSum - 100) >= 0.1) { showToast('Percent ka total 100% hona chahiye'); return; }
+    finalShares = computeShares('percent', splitState.splitRaw, among, total);
+  } else if (mode === 'shares') {
+    const totalShares = among.reduce((s, id) => s + (parseFloat(splitState.splitRaw[id] || 0) || 0), 0);
+    if (totalShares === 0) { showToast('Kam se kam ek hissa daalo'); return; }
+    finalShares = computeShares('shares', splitState.splitRaw, among, total);
+  }
+
+  // Build txn — backward-compatible: also set paidById for legacy readers
+  const txn = {
     id: uid(), kind: 'split', groupId: viewingGroupId,
-    amount, date, note, paidById, splitAmong, splitMode: 'equal',
+    amount: total, date, note,
+    payers,
+    paidById: payers[0].id, // legacy compat: first payer
+    splitAmong: among,
+    splitMode: mode === 'equal' ? 'equal' : 'custom', // shares always stored as computed ₹
+    shares: mode === 'equal' ? undefined : finalShares,
+    rawSplitMode: mode, // store original for reference
     createdAt: Date.now()
-  });
+  };
+  if (txn.splitMode === 'equal') delete txn.shares;
+
+  transactions.unshift(txn);
   scheduleSave(); render();
   closeModal();
   showToast('Kharcha add ho gaya ✓');
 };
 
 // ===== Settlement plan algorithm =====
-// Compute per-person net within a group (positive = they owe the group / negative = group owes them)
-// Then greedily settle (largest creditor with largest debtor)
 function computeGroupSettlement(groupId) {
   const g = getGroup(groupId); if (!g) return [];
   const participants = new Set(['me']);
   g.memberIds.forEach(id => participants.add(id));
 
-  // For each split in group, distribute net effects
   const netByPerson = {};
   participants.forEach(id => netByPerson[id] = 0);
 
-  txnsForGroup(groupId).forEach(t => {
+  txnsForGroup(groupId).forEach(rawT => {
+    const t = normaliseSplit(rawT);
     const total = t.amount;
     const among = t.splitAmong || [];
     if (among.length === 0) return;
-    const per = total / among.length;
-    // The payer paid `total`, so net +total
-    if (netByPerson[t.paidById] !== undefined) netByPerson[t.paidById] += total;
-    // Each participant in split owes `per` (net -per)
-    among.forEach(a => {
-      if (netByPerson[a] !== undefined) netByPerson[a] -= per;
+
+    // Get final ₹ shares
+    let finalShares;
+    if (!t.shares) {
+      finalShares = computeShares('equal', {}, among, total);
+    } else {
+      finalShares = t.shares;
+    }
+
+    // Each payer contributed their amount (net +)
+    (t.payers || []).forEach(p => {
+      if (netByPerson[p.id] !== undefined) netByPerson[p.id] += p.amount;
+    });
+    // Each person in splitAmong owes their share (net -)
+    among.forEach(id => {
+      if (netByPerson[id] !== undefined) netByPerson[id] -= (finalShares[id] || total / among.length);
     });
   });
 
-  // Now positive = group owes them; negative = they owe the group
-  const creditors = []; // { id, amount }
+  // Positive = group owes them; negative = they owe group
+  const creditors = [];
   const debtors = [];
   for (const id of Object.keys(netByPerson)) {
     const v = Math.round(netByPerson[id] * 100) / 100;
-    if (v > 0.01) creditors.push({ id, amount: v });
-    else if (v < -0.01) debtors.push({ id, amount: -v });
+    if (v > 0.5) creditors.push({ id, amount: v });
+    else if (v < -0.5) debtors.push({ id, amount: -v });
   }
   creditors.sort((a,b) => b.amount - a.amount);
   debtors.sort((a,b) => b.amount - a.amount);
@@ -1273,8 +1823,8 @@ function computeGroupSettlement(groupId) {
     transfers.push({ from: debtors[i].id, to: creditors[j].id, amount: Math.round(give * 100) / 100 });
     debtors[i].amount -= give;
     creditors[j].amount -= give;
-    if (debtors[i].amount < 0.01) i++;
-    if (creditors[j].amount < 0.01) j++;
+    if (debtors[i].amount < 0.5) i++;
+    if (creditors[j].amount < 0.5) j++;
   }
   return transfers;
 }
@@ -1294,14 +1844,9 @@ function renderDash() {
 function renderPeopleList() {
   const list = document.getElementById('peopleList');
   if (people.length === 0) {
-    list.innerHTML = `<div class="empty">
-      <div class="empty-icon">👥</div>
-      <div class="empty-text">Abhi koi banda nahi hai</div>
-      <div class="empty-hint">+ dabake naya banda add karo</div>
-    </div>`;
+    list.innerHTML = `<div class="empty"><div class="empty-icon">👥</div><div class="empty-text">Abhi koi banda nahi hai</div><div class="empty-hint">+ dabake naya banda add karo</div></div>`;
     return;
   }
-  // Sort: people with non-zero balance first (largest |bal| descending), then zero
   const withBal = people.map(p => ({ p, b: balanceWithPerson(p.id) }));
   withBal.sort((a, b) => Math.abs(b.b) - Math.abs(a.b));
   list.innerHTML = withBal.map(({ p, b }) => {
@@ -1310,10 +1855,7 @@ function renderPeopleList() {
     const amt = b === 0 ? '—' : (b > 0 ? '+' : '-') + formatINR(b);
     return `<div class="list-card" onclick="openPerson('${p.id}')">
       <div class="list-icon avatar-color-${p.colorIdx || 0}">${personInitial(p.name)}</div>
-      <div class="list-info">
-        <div class="list-name">${escapeHtml(p.name)}</div>
-        <div class="list-meta">${label}</div>
-      </div>
+      <div class="list-info"><div class="list-name">${escapeHtml(p.name)}</div><div class="list-meta">${label}</div></div>
       <div class="list-amt ${cls}">${amt}</div>
       <div style="color:var(--dim);font-size:20px;margin-left:4px;">›</div>
     </div>`;
@@ -1324,16 +1866,13 @@ function renderPeopleList() {
 function renderGroupsList() {
   const list = document.getElementById('groupsList');
   if (groups.length === 0) {
-    list.innerHTML = `<div class="empty">
-      <div class="empty-icon">🎫</div>
-      <div class="empty-text">Abhi koi group nahi hai</div>
-      <div class="empty-hint">Trip ya saath wale kharche ke liye group banao</div>
-    </div>`;
+    list.innerHTML = `<div class="empty"><div class="empty-icon">🎫</div><div class="empty-text">Abhi koi group nahi hai</div><div class="empty-hint">Trip ya saath wale kharche ke liye group banao</div></div>`;
     return;
   }
   list.innerHTML = groups.map(g => {
-    const txnCount = txnsForGroup(g.id).length;
-    const total = txnsForGroup(g.id).reduce((s,t) => s + t.amount, 0);
+    const txns = txnsForGroup(g.id);
+    const txnCount = txns.length;
+    const total = txns.reduce((s,t) => s + t.amount, 0);
     return `<div class="list-card" onclick="openGroup('${g.id}')">
       <div class="list-icon" style="background:rgba(0,194,168,0.15);color:var(--teal);">🎫</div>
       <div class="list-info">
@@ -1385,15 +1924,12 @@ function renderPersonTxn(t, personId) {
     kindClass = 'split';
     const delta = personDeltaInSplit(t, personId);
     amtCls = delta > 0 ? 'pos' : (delta < 0 ? 'neg' : 'zero');
-    amtStr = delta === 0 ? '—' : (delta > 0 ? '+' : '-') + formatINR(delta);
+    amtStr = delta === 0 ? '—' : (delta > 0 ? '+' : '-') + formatINR(Math.abs(delta));
   }
   const canDelete = t.kind !== 'split';
   return `<div class="txn-item">
     <div class="txn-icon ${kindClass}">${icon}</div>
-    <div class="txn-info">
-      <div class="txn-note">${escapeHtml(label)}</div>
-      <div class="txn-meta">${fmtDate(t.date)}</div>
-    </div>
+    <div class="txn-info"><div class="txn-note">${escapeHtml(label)}</div><div class="txn-meta">${fmtDate(t.date)}</div></div>
     <div class="txn-actions">
       <div class="txn-amt ${amtCls}">${amtStr}</div>
       ${canDelete ? `<button class="txn-del" onclick="deleteTxn('${t.id}')">delete</button>` : ''}
@@ -1413,12 +1949,12 @@ function renderGroupDetail() {
   if (transfers.length === 0) {
     planEl.innerHTML = `<div class="settle-card">✅ Is group mein sab clear hai</div>`;
   } else {
-    planEl.innerHTML = transfers.map(t => {
-      const fromName = t.from === 'me' ? 'Aap' : (getPerson(t.from)?.name || '?');
-      const toName = t.to === 'me' ? 'aapko' : `${getPerson(t.to)?.name || '?'} ko`;
+    planEl.innerHTML = transfers.map(tr => {
+      const fromName = tr.from === 'me' ? 'Aap' : (getPerson(tr.from)?.name || '?');
+      const toName = tr.to === 'me' ? 'aapko' : `${getPerson(tr.to)?.name || '?'} ko`;
       return `<div class="settle-card">
-        <span class="settle-name">${escapeHtml(fromName)}</span> ${t.from === 'me' ? 'do' : 'de'} <span class="settle-name">${escapeHtml(toName)}</span>
-        <strong style="float:right;color:var(--teal-light);">${formatINR(t.amount)}</strong>
+        <span class="settle-name">${escapeHtml(fromName)}</span> ${tr.from === 'me' ? 'do' : 'de'} <span class="settle-name">${escapeHtml(toName)}</span>
+        <strong style="float:right;color:var(--teal-light);">${formatINR(tr.amount)}</strong>
       </div>`;
     }).join('');
   }
@@ -1430,17 +1966,20 @@ function renderGroupDetail() {
     return;
   }
   list.innerHTML = txns.map(t => {
-    const payerName = t.paidById === 'me' ? 'Aapne' : (getPerson(t.paidById)?.name + ' ne' || '?');
-    const splitCount = (t.splitAmong || []).length;
+    const nt = normaliseSplit(t);
+    const payerNames = nt.payers.map(p => p.id === 'me' ? 'Aapne' : (getPerson(p.id)?.name || '?') + ' ne').join(', ');
+    const splitCount = (nt.splitAmong || []).length;
+    const modeLabel = { equal:'barabar', custom:'custom', percent:'%', shares:'hissa' }[nt.rawSplitMode || nt.splitMode] || 'barabar';
+    const isMultiPayer = nt.payers.length > 1;
     return `<div class="txn-item">
       <div class="txn-icon split">🎫</div>
       <div class="txn-info">
-        <div class="txn-note">${escapeHtml(t.note || 'Kharcha')}</div>
-        <div class="txn-meta">${fmtDate(t.date)} · ${escapeHtml(payerName)} diye · ${splitCount}-way split</div>
+        <div class="txn-note">${escapeHtml(nt.note || 'Kharcha')}${isMultiPayer ? '<span class="multi-payer-badge">👥 Multi</span>' : ''}</div>
+        <div class="txn-meta">${fmtDate(nt.date)} · ${escapeHtml(payerNames)} diye · ${splitCount}-way ${modeLabel} split</div>
       </div>
       <div class="txn-actions">
-        <div class="txn-amt" style="color:var(--text);">${formatINR(t.amount)}</div>
-        <button class="txn-del" onclick="deleteTxn('${t.id}')">delete</button>
+        <div class="txn-amt" style="color:var(--text);">${formatINR(nt.amount)}</div>
+        <button class="txn-del" onclick="deleteTxn('${nt.id}')">delete</button>
       </div>
     </div>`;
   }).join('');
@@ -1460,13 +1999,13 @@ window.shareSummary = function() {
       if (t.kind === 'lent') text += `${d} — ${t.note || 'Diye'}: ₹${t.amount} (maine diye)\n`;
       else if (t.kind === 'borrowed') text += `${d} — ${t.note || 'Liye'}: ₹${t.amount} (${p.name} ne diye)\n`;
       else if (t.kind === 'settle') {
-        const direction = t.amount > 0 ? `${p.name} ne wapas diye` : 'maine wapas diye';
-        text += `${d} — Settle: ₹${Math.abs(t.amount)} (${direction})\n`;
+        const dir = t.amount > 0 ? `${p.name} ne wapas diye` : 'maine wapas diye';
+        text += `${d} — Settle: ₹${Math.abs(t.amount)} (${dir})\n`;
       } else if (t.kind === 'split') {
         const g = getGroup(t.groupId);
         const delta = personDeltaInSplit(t, p.id);
         if (delta !== 0) {
-          text += `${d} — ${t.note || 'Kharcha'}${g ? ` (${g.name})` : ''}: ₹${Math.abs(delta).toFixed(0)} ${delta > 0 ? `mujhe dene hain` : `maine dene hain`}\n`;
+          text += `${d} — ${t.note || 'Kharcha'}${g ? ` (${g.name})` : ''}: ₹${Math.abs(delta).toFixed(0)} ${delta > 0 ? 'mujhe dene hain' : 'maine dene hain'}\n`;
         }
       }
     });
@@ -1484,25 +2023,27 @@ window.shareGroupSummary = function() {
   const transfers = computeGroupSettlement(g.id);
   const memberNames = ['Aap', ...g.memberIds.map(id => getPerson(id)?.name || '?')].join(', ');
   let text = `📒 ${g.name}\n(${fmtDate(todayStr())} tak)\nMembers: ${memberNames}\n\n`;
-
   if (txns.length === 0) {
     text += 'Abhi koi kharcha nahi hai.';
   } else {
     text += '💰 Kharche:\n';
     txns.slice().reverse().forEach(t => {
-      const payer = t.paidById === 'me' ? 'aapne' : `${getPerson(t.paidById)?.name || '?'} ne`;
-      const splitCount = (t.splitAmong || []).length;
-      text += `• ${fmtDate(t.date)} — ${t.note || 'Kharcha'}: ₹${t.amount.toFixed(0)} (${payer} diye, ${splitCount}-way split)\n`;
+      const nt = normaliseSplit(t);
+      const payer = nt.payers.length === 1
+        ? (nt.payers[0].id === 'me' ? 'aapne' : `${getPerson(nt.payers[0].id)?.name || '?'} ne`)
+        : nt.payers.map(p => p.id === 'me' ? 'aap' : getPerson(p.id)?.name || '?').join('+') + ' ne';
+      const splitCount = (nt.splitAmong || []).length;
+      text += `• ${fmtDate(nt.date)} — ${nt.note || 'Kharcha'}: ₹${nt.amount.toFixed(0)} (${payer} diye, ${splitCount}-way split)\n`;
     });
     text += `\nTotal: ₹${txns.reduce((s,t) => s + t.amount, 0).toFixed(0)}\n\n`;
     if (transfers.length === 0) {
       text += '✅ Sab clear hai';
     } else {
       text += '🔄 Settlement Plan:\n';
-      transfers.forEach(t => {
-        const from = t.from === 'me' ? 'Aap' : (getPerson(t.from)?.name || '?');
-        const to = t.to === 'me' ? 'aapko' : (getPerson(t.to)?.name || '?') + ' ko';
-        text += `• ${from} → ${to}: ₹${t.amount.toFixed(0)}\n`;
+      transfers.forEach(tr => {
+        const from = tr.from === 'me' ? 'Aap' : (getPerson(tr.from)?.name || '?');
+        const to = tr.to === 'me' ? 'aapko' : (getPerson(tr.to)?.name || '?') + ' ko';
+        text += `• ${from} → ${to}: ₹${tr.amount.toFixed(0)}\n`;
       });
     }
   }
@@ -1511,18 +2052,11 @@ window.shareGroupSummary = function() {
 
 async function shareOrCopy(text) {
   if (navigator.share) {
-    try {
-      await navigator.share({ text });
-      showToast('Share ho gaya ✓');
-      return;
-    } catch (e) {
-      if (e.name === 'AbortError') return;
-    }
+    try { await navigator.share({ text }); showToast('Share ho gaya ✓'); return; }
+    catch (e) { if (e.name === 'AbortError') return; }
   }
-  try {
-    await navigator.clipboard.writeText(text);
-    showToast('Summary copy ho gaya');
-  } catch (e) {
+  try { await navigator.clipboard.writeText(text); showToast('Summary copy ho gaya'); }
+  catch (e) {
     openModal(`
       <div class="modal-title">Summary</div>
       <div class="modal-sub">Yeh text copy karke share karo</div>
@@ -1544,13 +2078,8 @@ function render() {
 // ===== PWA manifest =====
 (function() {
   const manifest = {
-    name: "Hisaab",
-    short_name: "Hisaab",
-    description: "Lena dena, sab clear",
-    start_url: "./",
-    display: "standalone",
-    background_color: "#0F0F13",
-    theme_color: "#0F0F13",
+    name: "Hisaab", short_name: "Hisaab", description: "Lena dena, sab clear",
+    start_url: "./", display: "standalone", background_color: "#0F0F13", theme_color: "#0F0F13",
     orientation: "portrait",
     icons: [
       { src: "data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><rect width='100' height='100' rx='22' fill='%2300C2A8'/><text y='.9em' font-size='62' x='12'>📒</text></svg>", sizes: "192x192", type: "image/svg+xml" },
@@ -1559,8 +2088,7 @@ function render() {
   };
   try {
     const blob = new Blob([JSON.stringify(manifest)], {type:'application/json'});
-    const url = URL.createObjectURL(blob);
-    document.getElementById('manifestPlaceholder').href = url;
+    document.getElementById('manifestPlaceholder').href = URL.createObjectURL(blob);
   } catch (e) {}
 })();
 
@@ -1568,12 +2096,7 @@ function render() {
 setTimeout(() => {
   const boot = document.getElementById('bootScreen');
   if (boot && !boot.classList.contains('hidden') && !currentUser && !isGuestMode) {
-    // If user previously chose guest mode, enter it directly
-    if (localStorage.getItem('hisaab_guest_mode') === '1') {
-      isGuestMode = true;
-      enterGuestMode();
-      return;
-    }
+    if (localStorage.getItem('hisaab_guest_mode') === '1') { isGuestMode = true; enterGuestMode(); return; }
     boot.classList.add('hidden');
     document.getElementById('loginOverlay').classList.remove('hidden');
     if (!window.__firebase) {
