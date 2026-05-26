@@ -383,6 +383,17 @@
     .avatar-color-8 { background: #7ED957; color: #333; }
     .avatar-color-9 { background: #6D59FF; }
 
+
+    /* Language toggle pill */
+    .lang-pill {
+      display: inline-flex; align-items: center; gap: 5px;
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 20px; padding: 3px 10px 3px 8px;
+      font-size: 10px; font-weight: 700; color: var(--muted);
+      cursor: pointer; margin-left: 8px; letter-spacing: 0.3px;
+    }
+    .lang-pill:hover { color: var(--text); }
+
     /* Payer badge on expense card */
     .multi-payer-badge {
       display: inline-flex; align-items: center; gap: 3px;
@@ -435,6 +446,7 @@
           <div class="menu-item" id="menuSignIn" onclick="signInFromGuest()" style="display:none;color:var(--green);">☁️ Sync ke liye Sign In karein</div>
           <div class="menu-item" onclick="exportBackup()">💾 Backup Export</div>
           <div class="menu-item" onclick="triggerImport()">📂 Backup Import</div>
+          <div class="menu-item" id="langToggleItem" onclick="toggleLanguage()">🌐 Language: Hinglish</div>
           <div class="menu-item" onclick="signOutUser()" style="color: var(--red);" id="menuSignOut">🚪 Sign Out</div>
         </div>
       </div>
@@ -448,6 +460,7 @@
     </div>
 
     <input type="file" id="importFile" accept=".json" onchange="importBackup(event)" style="display:none;" />
+    <input type="file" id="splitwiseImportFile" accept=".csv" onchange="importSplitwiseCSV(event)" style="display:none;" />
 
     <!-- Dashboard -->
     <div class="dash-card" id="dashCard">
@@ -476,8 +489,8 @@
     <!-- People view -->
     <div id="peopleView">
       <div class="section-head">
-        <div class="section-title">Saare Log</div>
-        <button class="icon-btn" onclick="openAddPerson()" title="Banda Add Karo">+</button>
+        <div class="section-title" id="sectionPeople">Saare Log</div>
+        <button class="icon-btn" onclick="openAddPerson()" id="btnAddPerson" title="Banda Add Karo">+</button>
       </div>
       <div id="peopleList"></div>
     </div>
@@ -485,7 +498,7 @@
     <!-- Groups view -->
     <div id="groupsView" style="display:none">
       <div class="section-head">
-        <div class="section-title">Groups &amp; Trips</div>
+        <div class="section-title" id="sectionGroups">Groups &amp; Trips</div>
         <button class="icon-btn" onclick="openAddGroup()" title="Group Add Karo">+</button>
       </div>
       <div id="groupsList"></div>
@@ -499,19 +512,19 @@
         <div class="detail-bal" id="personDetailBal">₹0</div>
         <div class="detail-summary" id="personDetailSummary"></div>
         <div class="detail-actions">
-          <button class="detail-action primary" onclick="openAddTxn('lent')">💸 Tumne Diye</button>
-          <button class="detail-action" onclick="openAddTxn('borrowed')">📥 Tumne Liye</button>
+          <button class="detail-action primary" onclick="openAddTxn('lent')" id="btnLent">💸 Tumne Diye</button>
+          <button class="detail-action" onclick="openAddTxn('borrowed')" id="btnBorrowed">📥 Tumne Liye</button>
         </div>
         <div class="detail-actions" style="margin-top:8px;">
-          <button class="detail-action" onclick="openSettle()">✅ Settle Karo</button>
-          <button class="detail-action" onclick="shareSummary()">📤 Share</button>
+          <button class="detail-action" onclick="openSettle()" id="btnSettle">✅ Settle Karo</button>
+          <button class="detail-action" onclick="shareSummary()" id="btnShare">📤 Share</button>
         </div>
       </div>
       <div class="section-head">
-        <div class="section-title">Transactions ka History</div>
+        <div class="section-title" id="sectionTxnHistory">Transactions ka History</div>
       </div>
       <div id="personTxnList"></div>
-      <button class="danger-btn" onclick="askDeletePerson()" style="margin-top:20px;">🗑 Is bande ko delete karo</button>
+      <button class="danger-btn" onclick="askDeletePerson()" id="btnDeletePerson" style="margin-top:20px;">🗑 Is bande ko delete karo</button>
     </div>
 
     <!-- Group Detail view -->
@@ -521,21 +534,25 @@
         <div class="detail-name" id="groupDetailName">Group</div>
         <div class="detail-summary" id="groupDetailMembers" style="margin-top:8px;"></div>
         <div class="detail-actions" style="margin-top:14px;">
-          <button class="detail-action primary" onclick="openAddSplit()">💰 Kharcha Add Karo</button>
+          <button class="detail-action primary" onclick="openAddSplit()" id="btnAddSplit">💰 Kharcha Add Karo</button>
           <button class="detail-action" onclick="shareGroupSummary()">📤 Share</button>
+        </div>
+        <div class="detail-actions" style="margin-top:8px;">
+          <button class="detail-action" onclick="triggerSplitwiseImport()" title="Splitwise CSV import karo">📥 Splitwise Import</button>
+          <button class="detail-action" onclick="exportGroupCSV()" title="Is group ka CSV export karo">📊 Export CSV</button>
         </div>
       </div>
 
       <div class="section-head">
-        <div class="section-title">Settlement Plan</div>
+        <div class="section-title" id="sectionSettlement">Settlement Plan</div>
       </div>
       <div id="settlementPlan"></div>
 
       <div class="section-head" style="margin-top:16px;">
-        <div class="section-title">Saare Kharche</div>
+        <div class="section-title" id="sectionAllExpenses">Saare Kharche</div>
       </div>
       <div id="groupTxnList"></div>
-      <button class="danger-btn" onclick="askDeleteGroup()" style="margin-top:20px;">🗑 Is group ko delete karo</button>
+      <button class="danger-btn" onclick="askDeleteGroup()" id="btnDeleteGroup" style="margin-top:20px;">🗑 Is group ko delete karo</button>
     </div>
   </div>
 </div>
@@ -593,6 +610,348 @@ let firstSnapshotReceived = false;
 let mainTab = 'people';
 let viewingPersonId = null;
 let viewingGroupId = null;
+
+
+// =====================================================================
+// ===== LANGUAGE SYSTEM =====
+// Supported: 'hin' (Hinglish, default) | 'en' (English)
+// =====================================================================
+
+let currentLang = localStorage.getItem('hisaab_lang') || 'hin';
+
+const STRINGS = {
+  hin: {
+    // App
+    subtitle: 'Lena dena, sab clear',
+    syncOk: '☁ Sync ho gaya',
+    syncLoading: '⟳ Load ho raha…',
+    syncSaving: '⟳ Save ho raha…',
+    syncConnecting: '⟳ Connect ho raha…',
+    syncOffline: '⚠ Offline',
+    syncOfflineQueued: '⚠ Offline (queued)',
+    syncError: '⚠ Sync error',
+    syncGuest: '👤 Guest',
+    // Dashboard labels
+    toGet: 'Aapko Milne Hai',
+    toGive: 'Aapko Dene Hai',
+    netBalance: 'Net Balance',
+    // Tabs
+    tabPeople: '👥 Log',
+    tabGroups: '🎫 Groups',
+    // People
+    allPeople: 'Saare Log',
+    addPerson: 'Banda Add Karo',
+    personSub: 'Friend, family ya roommate',
+    namePlaceholder: 'jaise: Ravi',
+    nameLabel: 'Naam',
+    addBtn: 'Add Karo',
+    emptyPeople: 'Abhi koi banda nahi hai',
+    emptyPeopleHint: '+ dabake naya banda add karo',
+    theyOweYou: 'tumhe dene hai',
+    youOweThem: 'tumne dene hai',
+    tapToAdd: 'tap karke transaction add karo',
+    addedPerson: 'add ho gaya ✓',
+    nameExists: 'Yeh naam already hai',
+    enterName: 'Naam likho',
+    // Groups
+    allGroups: 'Groups & Trips',
+    addGroup: 'Group Add Karo',
+    newGroup: 'Naya Group / Trip',
+    newGroupSub: 'jaise: Goa Trip, Office Diwali, Roommate Kharcha',
+    groupName: 'Group ka Naam',
+    groupNamePlaceholder: 'jaise: Goa Trip Dec 2026',
+    selectMembers: 'Members Select Karo (optional)',
+    createGroup: 'Group Banao',
+    noMembersYet: 'Abhi koi member nahi — baad mein add kar sakte ho',
+    emptyGroups: 'Abhi koi group nahi hai',
+    emptyGroupsHint: 'Trip ya saath wale kharche ke liye group banao',
+    enterGroupName: 'Group ka naam likho',
+    created: 'ban gaya',
+    members: 'members',
+    expenses: 'kharche',
+    expense: 'kharcha',
+    // Transactions
+    txnHistory: 'Transactions ka History',
+    lentTitle: 'Tumne Diye',
+    borrowedTitle: 'Tumne Liye',
+    amountLabel: 'Kitne paise (₹)',
+    dateLabel: 'Date',
+    noteLabel: 'Note (optional)',
+    notePlaceholder: 'jaise: Movie ticket, Dinner',
+    saveBtn: 'Save Karo',
+    cancel: 'Cancel',
+    lentSaved: 'Diye gaye record ho gaye ✓',
+    borrowedSaved: 'Liye gaye record ho gaye ✓',
+    emptyTxns: 'Abhi koi transaction nahi hai',
+    deleteConfirm: 'Yeh transaction delete karein?',
+    txnDeleted: 'Transaction delete ho gaya',
+    // Settle
+    settleTitle: 'ke saath settle karo',
+    settleAmountLabel: 'Settle Amount (₹)',
+    settleMarkBtn: 'Settle Mark Karo',
+    alreadyClear: 'Hisaab pehle se clear hai',
+    settleSaved: 'Settle record ho gaya ✓',
+    // Detail
+    backBtn: '‹ Wapas',
+    theyOweYouDetail: 'ko aapke dene hai',
+    youOweThemDetail: 'aapne',
+    youOweThemDetail2: 'ko dene hai',
+    allClear: 'Sab clear hai',
+    lentBtn: '💸 Tumne Diye',
+    borrowedBtn: '📥 Tumne Liye',
+    settleBtn: '✅ Settle Karo',
+    shareBtn: '📤 Share',
+    deletePersonBtn: '🗑 Is bande ko delete karo',
+    deletePersonTitle: 'ko delete karein?',
+    cantUndo: 'Yeh wapas nahi aayega.',
+    deleteForever: 'Hamesha ke liye delete',
+    // Group detail
+    settlementPlan: 'Settlement Plan',
+    allExpenses: 'Saare Kharche',
+    addExpense: '💰 Kharcha Add Karo',
+    splitwiseImport: '📥 Splitwise Import',
+    exportCsv: '📊 Export CSV',
+    groupClear: '✅ Is group mein sab clear hai',
+    deleteGroupBtn: '🗑 Is group ko delete karo',
+    deleteGroupTitle: 'ko delete karein?',
+    groupDeleted: 'Group delete ho gaya',
+    personDeleted: 'Banda delete ho gaya',
+    // Split modal
+    addExpenseTitle: '💰 Kharcha Add Karo',
+    addExpenseSub: 'Multi-payer aur flexible split support',
+    whatFor: 'Kya ke liye',
+    whatForPlaceholder: 'jaise: Cafe mein Dinner',
+    totalAmount: 'Total amount (₹)',
+    whoPaid: '💸 Kisne diye?',
+    howPaid: 'PAISE KAISA DIYE:',
+    equalAmong: 'Barabar barabar',
+    customAmount: 'Custom amount',
+    splitAmong: '🔀 Kismein split karna hai?',
+    all: 'Sab',
+    clear: 'Clear',
+    splitMode: 'SPLIT TARIKA',
+    equal: '⚖️ Barabar',
+    custom: '✏️ Custom ₹',
+    percent: '% Percent',
+    shares: '🔢 Hissa',
+    saveExpense: 'Kharcha Save Karo',
+    expenseSaved: 'Kharcha add ho gaya ✓',
+    enterAmount: 'Sahi amount likho',
+    atLeastOnePayer: 'Kam se kam ek payer chuno',
+    atLeastOneSplit: 'Kam se kam ek banda split mein chuno',
+    atLeastOneMember: 'Kam se kam ek banda chahiye',
+    payerTotal: 'Payer amounts ka total',
+    shouldBe: 'hona chahiye',
+    customTotal: 'Custom amounts ka total',
+    percentTotal: 'Percent ka total 100% hona chahiye',
+    enterShare: 'Kam se kam ek hissa daalo',
+    // Import
+    importDataMissing: 'Import data nahi mila, dobara try karo',
+    // Language
+    langLabel: '🌐 Language: Hinglish',
+    // Backup
+    backupExported: 'Backup export ho gaya ✓',
+    backupRestored: 'Backup restore ho gaya ✓',
+    badBackup: 'Galat backup file',
+    // Misc
+    noPeople: 'Pehle koi banda add karo',
+    saveError: 'Save fail: ',
+    syncErr: 'Sync error: ',
+    signedOut: 'Sign out ho gaye',
+    signOutFail: 'Sign out fail ho gaya',
+    signInFail: 'Sign-in fail ho gaya: ',
+    signInLabel: 'Google se Sign In karein',
+    signingIn: 'Sign in ho raha hai…',
+    migrateMsg: 'Migrate ho gaya',
+    welcomeMsg: 'Welcome! Pehla banda add karo 👥',
+    guestMode: 'Guest mode chalu — data is phone par hi rahega',
+    csvExported: 'CSV export ho gaya ✓',
+  },
+  en: {
+    subtitle: 'Track who owes whom',
+    syncOk: '☁ Synced',
+    syncLoading: '⟳ Loading…',
+    syncSaving: '⟳ Saving…',
+    syncConnecting: '⟳ Connecting…',
+    syncOffline: '⚠ Offline',
+    syncOfflineQueued: '⚠ Offline (queued)',
+    syncError: '⚠ Sync error',
+    syncGuest: '👤 Guest',
+    toGet: 'You are Owed',
+    toGive: 'You Owe',
+    netBalance: 'Net Balance',
+    tabPeople: '👥 People',
+    tabGroups: '🎫 Groups',
+    allPeople: 'All People',
+    addPerson: 'Add Person',
+    personSub: 'Friend, family or roommate',
+    namePlaceholder: 'e.g. Ravi',
+    nameLabel: 'Name',
+    addBtn: 'Add',
+    emptyPeople: 'No people yet',
+    emptyPeopleHint: 'Tap + to add someone',
+    theyOweYou: 'owes you',
+    youOweThem: 'you owe',
+    tapToAdd: 'tap to add a transaction',
+    addedPerson: 'added ✓',
+    nameExists: 'This name already exists',
+    enterName: 'Enter a name',
+    allGroups: 'Groups & Trips',
+    addGroup: 'Add Group',
+    newGroup: 'New Group / Trip',
+    newGroupSub: 'e.g. Goa Trip, Office Party, Flat expenses',
+    groupName: 'Group Name',
+    groupNamePlaceholder: 'e.g. Goa Trip Dec 2026',
+    selectMembers: 'Select Members (optional)',
+    createGroup: 'Create Group',
+    noMembersYet: 'No members yet — you can add them later',
+    emptyGroups: 'No groups yet',
+    emptyGroupsHint: 'Create a group for trips or shared expenses',
+    enterGroupName: 'Enter a group name',
+    created: 'created',
+    members: 'members',
+    expenses: 'expenses',
+    expense: 'expense',
+    txnHistory: 'Transaction History',
+    lentTitle: 'You Paid',
+    borrowedTitle: 'They Paid',
+    amountLabel: 'Amount (₹)',
+    dateLabel: 'Date',
+    noteLabel: 'Note (optional)',
+    notePlaceholder: 'e.g. Movie ticket, Dinner',
+    saveBtn: 'Save',
+    cancel: 'Cancel',
+    lentSaved: 'Payment recorded ✓',
+    borrowedSaved: 'Payment recorded ✓',
+    emptyTxns: 'No transactions yet',
+    deleteConfirm: 'Delete this transaction?',
+    txnDeleted: 'Transaction deleted',
+    settleTitle: 'Settle up with',
+    settleAmountLabel: 'Settle Amount (₹)',
+    settleMarkBtn: 'Mark as Settled',
+    alreadyClear: 'Already settled up',
+    settleSaved: 'Settlement recorded ✓',
+    backBtn: '‹ Back',
+    theyOweYouDetail: 'owes you',
+    youOweThemDetail: 'You owe',
+    youOweThemDetail2: '',
+    allClear: 'All settled up',
+    lentBtn: '💸 You Paid',
+    borrowedBtn: '📥 They Paid',
+    settleBtn: '✅ Settle Up',
+    shareBtn: '📤 Share',
+    deletePersonBtn: '🗑 Delete Person',
+    deletePersonTitle: 'Delete?',
+    cantUndo: 'This cannot be undone.',
+    deleteForever: 'Delete Forever',
+    settlementPlan: 'Settlement Plan',
+    allExpenses: 'All Expenses',
+    addExpense: '💰 Add Expense',
+    splitwiseImport: '📥 Splitwise Import',
+    exportCsv: '📊 Export CSV',
+    groupClear: '✅ All settled in this group',
+    deleteGroupBtn: '🗑 Delete Group',
+    deleteGroupTitle: 'Delete group?',
+    groupDeleted: 'Group deleted',
+    personDeleted: 'Person deleted',
+    addExpenseTitle: '💰 Add Expense',
+    addExpenseSub: 'Multi-payer & flexible split',
+    whatFor: 'What for',
+    whatForPlaceholder: 'e.g. Dinner at cafe',
+    totalAmount: 'Total amount (₹)',
+    whoPaid: '💸 Who paid?',
+    howPaid: 'HOW PAID:',
+    equalAmong: 'Equal split',
+    customAmount: 'Custom amounts',
+    splitAmong: '🔀 Split among?',
+    all: 'All',
+    clear: 'Clear',
+    splitMode: 'SPLIT METHOD',
+    equal: '⚖️ Equal',
+    custom: '✏️ Custom ₹',
+    percent: '% Percent',
+    shares: '🔢 Shares',
+    saveExpense: 'Save Expense',
+    expenseSaved: 'Expense added ✓',
+    enterAmount: 'Enter a valid amount',
+    atLeastOnePayer: 'Select at least one payer',
+    atLeastOneSplit: 'Select at least one person',
+    atLeastOneMember: 'Select at least one person',
+    payerTotal: 'Payer amounts must total',
+    shouldBe: '',
+    customTotal: 'Custom amounts must total',
+    percentTotal: 'Percentages must add up to 100%',
+    enterShare: 'Enter at least one share value',
+    importDataMissing: 'Import data missing, please try again',
+    langLabel: '🌐 Language: English',
+    backupExported: 'Backup exported ✓',
+    backupRestored: 'Backup restored ✓',
+    badBackup: 'Invalid backup file',
+    noPeople: 'Add a person first',
+    saveError: 'Save failed: ',
+    syncErr: 'Sync error: ',
+    signedOut: 'Signed out',
+    signOutFail: 'Sign out failed',
+    signInFail: 'Sign-in failed: ',
+    signInLabel: 'Sign in with Google',
+    signingIn: 'Signing in…',
+    migrateMsg: 'Migrated',
+    welcomeMsg: 'Welcome! Add your first person 👥',
+    guestMode: 'Guest mode — data stays on this device only',
+    csvExported: 'CSV exported ✓',
+  }
+};
+
+function L(key) {
+  return (STRINGS[currentLang] && STRINGS[currentLang][key]) || STRINGS['hin'][key] || key;
+}
+
+window.toggleLanguage = function() {
+  currentLang = currentLang === 'hin' ? 'en' : 'hin';
+  localStorage.setItem('hisaab_lang', currentLang);
+  applyLanguage();
+  document.getElementById('userMenu').classList.remove('open');
+  showToast(currentLang === 'en' ? '🌐 Language: English' : '🌐 Language: Hinglish');
+};
+
+function applyLanguage() {
+  // Subtitle
+  const sub = document.querySelector('.subtitle');
+  if (sub) sub.textContent = L('subtitle');
+  // Tabs
+  const tp = document.getElementById('tab-people');
+  if (tp) tp.textContent = L('tabPeople');
+  const tg = document.getElementById('tab-groups');
+  if (tg) tg.textContent = L('tabGroups');
+  // Dashboard labels
+  const dLabels = document.querySelectorAll('.dash-label');
+  if (dLabels[0]) dLabels[0].textContent = L('toGet');
+  if (dLabels[1]) dLabels[1].textContent = L('toGive');
+  const netLabel = document.querySelector('.net-label');
+  if (netLabel) netLabel.textContent = L('netBalance');
+  // Section titles (static)
+  const sp = document.getElementById('sectionPeople'); if (sp) sp.textContent = L('allPeople');
+  const sg = document.getElementById('sectionGroups'); if (sg) sg.textContent = L('allGroups');
+  const sth = document.getElementById('sectionTxnHistory'); if (sth) sth.textContent = L('txnHistory');
+  const ss = document.getElementById('sectionSettlement'); if (ss) ss.textContent = L('settlementPlan');
+  const sae = document.getElementById('sectionAllExpenses'); if (sae) sae.textContent = L('allExpenses');
+  // Lang toggle menu label
+  const langItem = document.getElementById('langToggleItem');
+  if (langItem) langItem.textContent = L('langLabel');
+  // Person detail action buttons
+  const bl = document.getElementById('btnLent'); if (bl) bl.textContent = L('lentBtn');
+  const bb = document.getElementById('btnBorrowed'); if (bb) bb.textContent = L('borrowedBtn');
+  const bse = document.getElementById('btnSettle'); if (bse) bse.textContent = L('settleBtn');
+  const bsh = document.getElementById('btnShare'); if (bsh) bsh.textContent = L('shareBtn');
+  const bdp = document.getElementById('btnDeletePerson'); if (bdp) bdp.textContent = L('deletePersonBtn');
+  // Group detail buttons
+  const bas = document.getElementById('btnAddSplit'); if (bas) bas.textContent = L('addExpense');
+  const bdg = document.getElementById('btnDeleteGroup'); if (bdg) bdg.textContent = L('deleteGroupBtn');
+  // Back buttons
+  document.querySelectorAll('.detail-back').forEach(b => { b.textContent = L('backBtn'); });
+  // Re-render to apply language to all dynamic content
+  render();
+}
 
 // ===== Helpers =====
 function uid() { return Date.now().toString(36) + Math.random().toString(36).slice(2, 7); }
@@ -838,7 +1197,7 @@ function onUserSignedIn(user) {
   document.getElementById('appRoot').classList.remove('hidden');
   document.getElementById('guestBanner').style.display = 'none';
   document.getElementById('menuSignIn').style.display = 'none';
-  document.getElementById('menuSignOut').textContent = '🚪 Sign Out';
+  document.getElementById('menuSignOut').textContent = currentLang === 'en' ? '🚪 Sign Out' : '🚪 Sign Out';
 
   document.getElementById('userEmail').textContent = user.email || user.displayName || 'Signed in';
   const avatarEl = document.getElementById('userAvatar');
@@ -872,7 +1231,8 @@ function enterGuestMode() {
   document.getElementById('userAvatar').innerHTML = '';
   document.getElementById('userAvatar').textContent = '👤';
   document.getElementById('userAvatar').style.background = 'var(--border)';
-  setSyncStatus('guest', '👤 Guest');
+  setSyncStatus('guest', L('syncGuest'));
+  setTimeout(applyLanguage, 50);
 
   try {
     people = JSON.parse(localStorage.getItem('hisaab_people') || '[]');
@@ -970,6 +1330,7 @@ function startCloudSync(uid) {
       transactions = Array.isArray(data.transactions) ? data.transactions : [];
       firstSnapshotReceived = true;
       render();
+      applyLanguage();
       if (!navigator.onLine) setSyncStatus('offline', '⚠ Offline');
       else if (pending) setSyncStatus('syncing', '⟳ Sync ho raha…');
       else setSyncStatus('', '☁ Sync ho gaya');
@@ -984,12 +1345,12 @@ function startCloudSync(uid) {
         } catch (e) {}
         if (Array.isArray(localPeople) && (localPeople.length > 0 || localTxns.length > 0)) {
           people = localPeople; groups = localGroups; transactions = localTxns;
-          pushToCloud(); render();
-          showToast(`Migrate ho gaya: ${localPeople.length} log, ${localTxns.length} transaction ✓`);
+          pushToCloud(); render(); applyLanguage();
+          showToast(`${L('migrateMsg')}: ${localPeople.length} log, ${localTxns.length} transaction ✓`);
         } else {
           people = []; groups = []; transactions = [];
-          pushToCloud(); render();
-          showToast('Welcome! Pehla banda add karo 👥');
+          pushToCloud(); render(); applyLanguage();
+          showToast(L('welcomeMsg')); //  Pehla banda add karo 👥');
         }
       }
     }
@@ -1041,7 +1402,7 @@ window.exportBackup = function() {
   a.download = `hisaab-backup-${todayStr()}.json`;
   document.body.appendChild(a); a.click(); document.body.removeChild(a);
   setTimeout(() => URL.revokeObjectURL(a.href), 1000);
-  showToast('Backup export ho gaya ✓');
+  showToast(L('backupExported'));
 };
 
 window.importBackup = function(event) {
@@ -1053,8 +1414,8 @@ window.importBackup = function(event) {
       if (!Array.isArray(data.people) || !Array.isArray(data.transactions)) throw new Error('Bad format');
       people = data.people; groups = data.groups || []; transactions = data.transactions;
       scheduleSave(); render();
-      showToast('Backup restore ho gaya ✓');
-    } catch (err) { showToast('Galat backup file'); }
+      showToast(L('backupRestored'));
+    } catch (err) { showToast(L('badBackup')); }
   };
   reader.readAsText(file);
   event.target.value = '';
@@ -1174,7 +1535,7 @@ window.doDeletePerson = function() {
   scheduleSave();
   closeModal();
   closeDetail();
-  showToast('Banda delete ho gaya');
+  showToast(L('personDeleted'));
 };
 
 // ===== Add Transaction (lent/borrowed) =====
@@ -1200,20 +1561,20 @@ window.openAddTxn = function(kind) {
 
 window.saveTxn = function() {
   const amount = parseFloat(document.getElementById('txnAmount').value);
-  if (!amount || amount <= 0) { showToast('Sahi amount likho'); return; }
+  if (!amount || amount <= 0) { showToast(L('enterAmount')); return; }
   const date = document.getElementById('txnDate').value || todayStr();
   const note = document.getElementById('txnNote').value.trim();
   transactions.unshift({ id: uid(), kind: pendingKind, personId: viewingPersonId, amount, date, note, createdAt: Date.now() });
   scheduleSave(); render();
   closeModal();
-  showToast(pendingKind === 'lent' ? 'Diye gaye record ho gaye ✓' : 'Liye gaye record ho gaye ✓');
+  showToast(pendingKind === 'lent' ? L('lentSaved') : L('borrowedSaved'));
 };
 
 // ===== Settle =====
 window.openSettle = function() {
   const p = getPerson(viewingPersonId); if (!p) return;
   const bal = balanceWithPerson(p.id);
-  if (bal === 0) { showToast('Hisaab pehle se clear hai'); return; }
+  if (bal === 0) { showToast(L('alreadyClear')); return; }
   const owedBy = bal > 0 ? `${p.name} ko dene hai` : 'aapne dene hai';
   openModal(`
     <div class="modal-title">${escapeHtml(p.name)} ke saath settle karo</div>
@@ -1237,55 +1598,49 @@ window.saveSettle = function(sign) {
   transactions.unshift({ id: uid(), kind: 'settle', personId: viewingPersonId, amount: raw * sign, date, note, createdAt: Date.now() });
   scheduleSave(); render();
   closeModal();
-  showToast('Settle record ho gaya ✓');
+  showToast(L('settleSaved'));
 };
 
 window.deleteTxn = function(txnId) {
   if (!confirm('Yeh transaction delete karein?')) return;
   transactions = transactions.filter(t => t.id !== txnId);
   scheduleSave(); render();
-  showToast('Transaction delete ho gaya');
+  showToast(L('txnDeleted'));
 };
 
 // ===== Groups =====
 window.openAddGroup = function() {
-  if (people.length === 0) {
-    openModal(`
-      <div class="modal-title">Pehle log add karo</div>
-      <div class="modal-sub">Group banane ke liye kam se kam ek banda chahiye.</div>
-      <button class="submit-btn" onclick="closeModal();setMainTab('people');openAddPerson()">Banda Add Karo</button>
-      <button class="cancel-btn" onclick="closeModal()">Cancel</button>
-    `);
-    return;
-  }
-  const memberChips = people.map(p =>
-    `<div class="member-chip" data-pid="${p.id}" onclick="toggleMemberChip(this)">${escapeHtml(p.name)}</div>`
-  ).join('');
+  const memberChips = people.length > 0
+    ? people.map(p =>
+        `<div class="member-chip" data-pid="${p.id}" onclick="toggleMemberChip(this)">${escapeHtml(p.name)}</div>`
+      ).join('')
+    : `<div style="font-size:12px;color:var(--muted);padding:8px 0;">${L('noMembersYet')}</div>`;
   openModal(`
-    <div class="modal-title">Naya Group / Trip</div>
-    <div class="modal-sub">jaise: Goa Trip, Office Diwali, Roommate Kharcha</div>
-    <label class="form-label">Group ka Naam</label>
-    <input class="form-input" id="newGroupName" placeholder="jaise: Goa Trip Dec 2026" />
-    <label class="form-label">Members Select Karo</label>
-    <div class="member-grid">${memberChips}</div>
-    <button class="submit-btn" onclick="saveGroup()">Group Banao</button>
-    <button class="cancel-btn" onclick="closeModal()">Cancel</button>
+    <div class="modal-title">${L('newGroup')}</div>
+    <div class="modal-sub">${L('newGroupSub')}</div>
+    <label class="form-label">${L('groupName')}</label>
+    <input class="form-input" id="newGroupName" placeholder="${L('groupNamePlaceholder')}" />
+    ${people.length > 0 ? `<label class="form-label">${L('selectMembers')}</label>
+    <div class="member-grid">${memberChips}</div>` : `<div style="background:rgba(245,158,11,0.08);border:1px solid rgba(245,158,11,0.2);border-radius:10px;padding:10px 12px;font-size:12px;color:var(--amber);margin-bottom:14px;">💡 ${L('noMembersYet')}</div>`}
+    <button class="submit-btn" onclick="saveGroup()">${L('createGroup')}</button>
+    <button class="cancel-btn" onclick="closeModal()">${L('cancel')}</button>
   `);
+  setTimeout(() => document.getElementById('newGroupName')?.focus(), 100);
 };
 
 window.toggleMemberChip = function(el) { el.classList.toggle('active'); };
 
 window.saveGroup = function() {
   const name = document.getElementById('newGroupName').value.trim();
-  if (!name) { showToast('Group ka naam likho'); return; }
+  if (!name) { showToast(L('enterGroupName')); return; }
   const chips = document.querySelectorAll('.member-chip.active');
   const memberIds = Array.from(chips).map(c => c.dataset.pid);
-  if (memberIds.length === 0) { showToast('Kam se kam ek member chuno'); return; }
+  // members are optional — group can start empty
   const newGroup = { id: uid(), name, memberIds, includeMe: true, createdAt: Date.now() };
   groups.unshift(newGroup);
   scheduleSave(); render();
   closeModal();
-  showToast(`Group "${name}" ban gaya ✓`);
+  showToast(`Group "${name}" ${L('created')} ✓`);
   setTimeout(() => openGroup(newGroup.id), 200);
 };
 
@@ -1309,7 +1664,7 @@ window.doDeleteGroup = function() {
   transactions = transactions.filter(t => !(t.kind === 'split' && t.groupId === id));
   groups = groups.filter(g => g.id !== id);
   scheduleSave(); closeModal(); closeDetail();
-  showToast('Group delete ho gaya');
+  showToast(L('groupDeleted'));
 };
 
 // ===================================================================
@@ -1769,7 +2124,7 @@ window.saveSplit = function() {
   transactions.unshift(txn);
   scheduleSave(); render();
   closeModal();
-  showToast('Kharcha add ho gaya ✓');
+  showToast(L('expenseSaved'));
 };
 
 // ===== Settlement plan algorithm =====
@@ -1844,14 +2199,14 @@ function renderDash() {
 function renderPeopleList() {
   const list = document.getElementById('peopleList');
   if (people.length === 0) {
-    list.innerHTML = `<div class="empty"><div class="empty-icon">👥</div><div class="empty-text">Abhi koi banda nahi hai</div><div class="empty-hint">+ dabake naya banda add karo</div></div>`;
+    list.innerHTML = `<div class="empty"><div class="empty-icon">👥</div><div class="empty-text">${L('emptyPeople')}</div><div class="empty-hint">${L('emptyPeopleHint')}</div></div>`;
     return;
   }
   const withBal = people.map(p => ({ p, b: balanceWithPerson(p.id) }));
   withBal.sort((a, b) => Math.abs(b.b) - Math.abs(a.b));
   list.innerHTML = withBal.map(({ p, b }) => {
     const cls = b > 0 ? 'pos' : (b < 0 ? 'neg' : 'zero');
-    const label = b > 0 ? 'tumhe dene hai' : (b < 0 ? 'tumne dene hai' : 'tap karke transaction add karo');
+    const label = b > 0 ? L('theyOweYou') : (b < 0 ? L('youOweThem') : L('tapToAdd'));
     const amt = b === 0 ? '—' : (b > 0 ? '+' : '-') + formatINR(b);
     return `<div class="list-card" onclick="openPerson('${p.id}')">
       <div class="list-icon avatar-color-${p.colorIdx || 0}">${personInitial(p.name)}</div>
@@ -1866,7 +2221,7 @@ function renderPeopleList() {
 function renderGroupsList() {
   const list = document.getElementById('groupsList');
   if (groups.length === 0) {
-    list.innerHTML = `<div class="empty"><div class="empty-icon">🎫</div><div class="empty-text">Abhi koi group nahi hai</div><div class="empty-hint">Trip ya saath wale kharche ke liye group banao</div></div>`;
+    list.innerHTML = `<div class="empty"><div class="empty-icon">🎫</div><div class="empty-text">${L('emptyGroups')}</div><div class="empty-hint">${L('emptyGroupsHint')}</div></div>`;
     return;
   }
   list.innerHTML = groups.map(g => {
@@ -1877,7 +2232,7 @@ function renderGroupsList() {
       <div class="list-icon" style="background:rgba(0,194,168,0.15);color:var(--teal);">🎫</div>
       <div class="list-info">
         <div class="list-name">${escapeHtml(g.name)}</div>
-        <div class="list-meta">${g.memberIds.length + 1} members · ${txnCount} kharch${txnCount !== 1 ? 'e' : 'a'}</div>
+        <div class="list-meta">${g.memberIds.length + 1} ${L('members')} · ${txnCount} ${txnCount !== 1 ? L('expenses') : L('expense')}</div>
       </div>
       <div class="list-amt zero">${formatINR(total)}</div>
       <div style="color:var(--dim);font-size:20px;margin-left:4px;">›</div>
@@ -1895,12 +2250,12 @@ function renderPersonDetail() {
   else if (bal < 0) { balEl.textContent = '-' + formatINR(bal); balEl.className = 'detail-bal neg'; }
   else { balEl.textContent = '₹0'; balEl.className = 'detail-bal zero'; }
   document.getElementById('personDetailSummary').textContent =
-    bal > 0 ? `${p.name} ko aapke dene hai` : (bal < 0 ? `Aapne ${p.name} ko dene hai` : 'Sab clear hai');
+    bal > 0 ? `${p.name} ${L('theyOweYouDetail')}` : (bal < 0 ? `${L('youOweThemDetail')} ${p.name} ${L('youOweThemDetail2')}` : L('allClear'));
 
   const txns = txnsForPerson(p.id);
   const list = document.getElementById('personTxnList');
   if (txns.length === 0) {
-    list.innerHTML = `<div class="empty"><div class="empty-icon">🧾</div><div class="empty-text">Abhi koi transaction nahi hai</div></div>`;
+    list.innerHTML = `<div class="empty"><div class="empty-icon">🧾</div><div class="empty-text">${L('emptyTxns')}</div></div>`;
     return;
   }
   list.innerHTML = txns.map(t => renderPersonTxn(t, p.id)).join('');
@@ -1947,7 +2302,7 @@ function renderGroupDetail() {
   const transfers = computeGroupSettlement(g.id);
   const planEl = document.getElementById('settlementPlan');
   if (transfers.length === 0) {
-    planEl.innerHTML = `<div class="settle-card">✅ Is group mein sab clear hai</div>`;
+    planEl.innerHTML = `<div class="settle-card">${L('groupClear')}</div>`;
   } else {
     planEl.innerHTML = transfers.map(tr => {
       const fromName = tr.from === 'me' ? 'Aap' : (getPerson(tr.from)?.name || '?');
@@ -1962,7 +2317,7 @@ function renderGroupDetail() {
   const txns = txnsForGroup(g.id);
   const list = document.getElementById('groupTxnList');
   if (txns.length === 0) {
-    list.innerHTML = `<div class="empty"><div class="empty-icon">💰</div><div class="empty-text">Abhi koi kharcha nahi hai</div></div>`;
+    list.innerHTML = `<div class="empty"><div class="empty-icon">💰</div><div class="empty-text">${L('emptyTxns')}</div></div>`;
     return;
   }
   list.innerHTML = txns.map(t => {
@@ -2115,6 +2470,461 @@ window.addEventListener('load', () => {
       .catch(err => console.warn('SW registration failed:', err));
   }
 });
+
+// =====================================================================
+// ===== SPLITWISE IMPORT =====
+// =====================================================================
+
+window.triggerSplitwiseImport = function() {
+  const inp = document.getElementById('splitwiseImportFile');
+  inp.value = '';
+  inp.click();
+};
+
+/**
+ * Parse a Splitwise CSV export and import into the current group.
+ *
+ * Splitwise CSV format:
+ *   Row 0 : Date, Description, Category, Cost, Currency, [Name1], [Name2], ...
+ *   Row 1 : blank
+ *   Row 2+: expense data rows
+ *   Last  : blank, then "Total balance" summary row (skip)
+ *
+ * Per-member column value (net amount):
+ *   positive → that person paid more than their share (they are owed)
+ *   negative → that person owes that much
+ *
+ * Strategy:
+ *   - Members in the CSV are matched to existing Hisaab people by name (fuzzy).
+ *   - Any CSV member whose name matches "me" heuristic (the logged-in user's
+ *     display name, or the user picks at import time) is mapped to 'me'.
+ *   - We offer a one-time mapping UI before importing.
+ *   - Each non-Payment row → split txn with splitMode='custom', shares=net amounts
+ *     converted to who-owes-whom.
+ *   - "Payment" category rows → skipped (they are settlements, not expenses).
+ *   - Total balance row → skipped.
+ *   - Rows with 0 cost → skipped.
+ */
+window.importSplitwiseCSV = function(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const g = getGroup(viewingGroupId);
+  if (!g) { showToast('Pehle group open karo'); return; }
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    try {
+      const text = e.target.result;
+      const parsed = parseSplitwiseCSV(text);
+      if (!parsed || parsed.expenses.length === 0) {
+        showToast('CSV mein koi valid expense nahi mila'); return;
+      }
+      // Show member mapping modal before importing
+      openSplitwiseMappingModal(parsed, g);
+    } catch (err) {
+      console.error('Splitwise import error:', err);
+      showToast('CSV parse fail: ' + err.message);
+    }
+  };
+  reader.readAsText(file);
+  event.target.value = '';
+};
+
+/**
+ * Parse Splitwise CSV text → { members: [name], expenses: [{...}] }
+ */
+function parseSplitwiseCSV(text) {
+  // Normalize line endings
+  const lines = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n').split('\n');
+
+  // Find header row (first non-empty line)
+  let headerIdx = -1;
+  for (let i = 0; i < lines.length; i++) {
+    if (lines[i].trim()) { headerIdx = i; break; }
+  }
+  if (headerIdx === -1) throw new Error('Empty file');
+
+  const headers = parseCSVRow(lines[headerIdx]);
+  // Fixed columns: Date(0), Description(1), Category(2), Cost(3), Currency(4)
+  // Member columns: 5+
+  if (headers.length < 6) throw new Error('Not enough columns — is this a Splitwise export?');
+  const memberNames = headers.slice(5).map(n => n.trim().replace(/ \(removed\)$/i, '').trim());
+
+  const expenses = [];
+  for (let i = headerIdx + 1; i < lines.length; i++) {
+    const line = lines[i].trim();
+    if (!line) continue;
+
+    const cols = parseCSVRow(lines[i]);
+    if (cols.length < 5) continue;
+
+    const date = cols[0].trim();
+    const description = cols[1].trim();
+    const category = cols[2].trim();
+    const cost = parseFloat(cols[3]) || 0;
+    // const currency = cols[4].trim();
+
+    // Skip total balance row
+    if (description.toLowerCase().includes('total balance')) continue;
+    // Skip zero cost
+    if (cost <= 0) continue;
+    // Skip payment rows (they are settlements)
+    if (category.toLowerCase() === 'payment') continue;
+    // Skip if date looks invalid
+    if (!date.match(/^\d{4}-\d{2}-\d{2}$/)) continue;
+
+    // Per-member net amounts (positive = they paid/are owed, negative = they owe)
+    const memberNets = {};
+    for (let m = 0; m < memberNames.length; m++) {
+      const val = parseFloat(cols[5 + m]) || 0;
+      if (val !== 0) memberNets[memberNames[m]] = val;
+    }
+
+    expenses.push({ date, description, category, cost, memberNets });
+  }
+
+  return { members: memberNames, expenses };
+}
+
+/**
+ * Parse a single CSV row, handling quoted fields with commas inside.
+ */
+function parseCSVRow(line) {
+  const result = [];
+  let cur = '';
+  let inQuotes = false;
+  for (let i = 0; i < line.length; i++) {
+    const ch = line[i];
+    if (ch === '"') {
+      if (inQuotes && line[i+1] === '"') { cur += '"'; i++; } // escaped quote
+      else inQuotes = !inQuotes;
+    } else if (ch === ',' && !inQuotes) {
+      result.push(cur); cur = '';
+    } else {
+      cur += ch;
+    }
+  }
+  result.push(cur);
+  return result;
+}
+
+/**
+ * Show a mapping modal: map each Splitwise member → Hisaab person / 'me' / 'skip' / 'add new'
+ * All people in the Hisaab app are available (not just group members).
+ * Unmatched CSV members default to "Add as new person" — auto-created on import.
+ */
+let _swParsedData = null; // temp store for Splitwise import data
+function openSplitwiseMappingModal(parsed, g) {
+  _swParsedData = parsed;
+  const { members, expenses } = parsed;
+
+  // All Hisaab people available for mapping (not just group members)
+  const allOptions = [
+    { id: 'me', name: 'Aap (Main)' },
+    ...people.map(p => ({ id: p.id, name: p.name }))
+  ];
+
+  // Auto-match: search all people by name similarity
+  function bestMatch(csvName) {
+    const lower = csvName.toLowerCase().trim();
+    // Exact match (case-insensitive)
+    for (const p of allOptions) {
+      if (p.name.toLowerCase().trim() === lower) return p.id;
+    }
+    // First-name match
+    const firstWord = lower.split(/[\s,]+/)[0];
+    if (firstWord.length >= 2) {
+      for (const p of allOptions) {
+        const pFirst = p.name.toLowerCase().split(/[\s,]+/)[0];
+        if (pFirst === firstWord) return p.id;
+      }
+    }
+    // Contains match
+    for (const p of allOptions) {
+      if (p.name.toLowerCase().includes(firstWord) || lower.includes(p.name.toLowerCase().split(' ')[0])) return p.id;
+    }
+    // No match — default to "Add as new person"
+    return '__new__:' + csvName;
+  }
+
+  const memberRows = members.map(name => {
+    const auto = bestMatch(name);
+    const isNew = auto.startsWith('__new__:');
+    const opts = [
+      `<option value="skip">— Skip (ignore) —</option>`,
+      `<option value="__new__:${escapeHtml(name)}"${isNew ? ' selected' : ''}>➕ Add as new person: ${escapeHtml(name)}</option>`,
+      ...allOptions.map(p => `<option value="${p.id}"${auto === p.id ? ' selected' : ''}>${escapeHtml(p.name)}</option>`)
+    ].join('');
+    const badgeHtml = isNew
+      ? `<span style="font-size:10px;font-weight:700;color:var(--teal);background:rgba(0,194,168,0.1);border-radius:4px;padding:1px 5px;margin-left:4px;">NEW</span>`
+      : `<span style="font-size:10px;font-weight:700;color:var(--green);background:rgba(74,222,128,0.1);border-radius:4px;padding:1px 5px;margin-left:4px;">MATCH</span>`;
+    return `<div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;">
+      <div style="flex:1;font-size:13px;font-weight:600;color:var(--text);min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${escapeHtml(name)}${badgeHtml}</div>
+      <select class="payer-mode-select sw-map-select" data-csvname="${escapeHtml(name)}" style="flex:1.2;">${opts}</select>
+    </div>`;
+  }).join('');
+
+  const newCount = members.filter(n => bestMatch(n).startsWith('__new__:')).length;
+  const matchCount = members.length - newCount;
+
+  openModal(`
+    <div class="modal-title">📥 Splitwise Import</div>
+    <div class="modal-sub">${expenses.length} expenses · ${escapeHtml(g.name)}</div>
+
+    <div class="validation-bar ok" style="margin-bottom:10px;">
+      ✅ ${matchCount} auto-matched · ➕ ${newCount} new person(s) will be created
+    </div>
+    <div class="validation-bar warn" style="margin-bottom:14px;">
+      ⚠ Review mapping. "Add as new person" = auto-create in Hisaab + add to group.
+    </div>
+
+    <div class="form-label">Member Mapping (${members.length} CSV members)</div>
+    <div style="background:var(--surface2);border-radius:12px;padding:14px;margin-bottom:14px;max-height:280px;overflow-y:auto;">
+      ${memberRows}
+    </div>
+
+    <button class="submit-btn" onclick="doSplitwiseImport()">
+      ✅ ${expenses.length} Expenses Import Karo
+    </button>
+    <button class="cancel-btn" onclick="closeModal()">Cancel</button>
+  `);
+}
+
+window.doSplitwiseImport = function() {
+  const parsed = _swParsedData;
+  if (!parsed) { showToast(L('importDataMissing')); return; }
+  const g = getGroup(viewingGroupId); if (!g) return;
+
+  // Read mapping from select dropdowns
+  const mapping = {}; // csvName → hisaab id ('me' | personId | 'skip' | '__new__')
+  document.querySelectorAll('.sw-map-select').forEach(sel => {
+    mapping[sel.dataset.csvname] = sel.value;
+  });
+
+  // Auto-create any new people (mapped to __new__:Name)
+  const newPeopleCreated = [];
+  for (const [csvName, hid] of Object.entries(mapping)) {
+    if (hid && hid.startsWith('__new__:')) {
+      const newName = hid.slice(8);
+      // Check not already existing
+      let existing = people.find(p => p.name.toLowerCase() === newName.toLowerCase());
+      if (!existing) {
+        existing = { id: uid(), name: newName, colorIdx: people.length % 10, createdAt: Date.now() };
+        people.push(existing);
+        newPeopleCreated.push(existing);
+      }
+      mapping[csvName] = existing.id;
+      // Also add to group if not already there
+      if (!g.memberIds.includes(existing.id)) {
+        g.memberIds.push(existing.id);
+      }
+    } else if (hid && hid !== 'skip' && hid !== 'me') {
+      // Existing person — make sure they're in the group
+      if (!g.memberIds.includes(hid)) {
+        g.memberIds.push(hid);
+      }
+    }
+  }
+
+  const allGroupIds = new Set(['me', ...g.memberIds]);
+  let imported = 0;
+  let skipped = 0;
+
+  for (const exp of parsed.expenses) {
+    // Build per-hisaabId net map (merging duplicate mappings)
+    const hisaabNets = {}; // hisaabId → net amount
+    for (const [csvName, net] of Object.entries(exp.memberNets)) {
+      const hid = mapping[csvName];
+      if (!hid || hid === 'skip') continue;
+      if (!allGroupIds.has(hid)) continue;
+      hisaabNets[hid] = (hisaabNets[hid] || 0) + net;
+    }
+
+    // Need at least 2 participants with non-zero nets
+    const participants = Object.keys(hisaabNets).filter(id => Math.abs(hisaabNets[id]) > 0.005);
+    if (participants.length === 0) { skipped++; continue; }
+
+    // Determine payers: those with positive net (they paid more than their share)
+    // Determine debtors: those with negative net (they owe)
+    // The cost breakdown:
+    //   payer's amount paid = their share + their positive net
+    //   debtor's share = |their negative net|
+    // We store shares as absolute amounts each person owes (positive for all)
+    // and payers as who contributed positively
+
+    const payers = [];
+    const shares = {}; // hisaabId → ₹ they owe (their share of the expense)
+
+    for (const id of participants) {
+      const net = hisaabNets[id];
+      if (net > 0) {
+        // They paid net more than their share — they are a payer
+        // Their actual payment = their share + net surplus
+        // Their share of expense is their portion of cost
+        // Since net = payment - share, and we know net, we need share separately
+        // But Splitwise only gives us net, not payment and share individually
+        // Exception: for the paying person, net = payment - share
+        // We reconstruct: if positive net → they overpaid (are owed), their share = cost - net? No.
+        // Actually: net = what they paid MINUS what they owe.
+        // So payment - share_owed = net (positive)
+        // We don't have payment or share_owed individually from just net.
+        // HOWEVER: we can treat the entire expense as: each person's share = |negative net|
+        // and each payer's contribution = cost recovered from debtors → complex.
+        //
+        // Simplest correct approach for Hisaab:
+        // Store payers with amounts inferred from total cost and debtor shares.
+        // Debtors' shares sum = total payer contributions = total cost.
+        // Each payer's contribution is proportional to their positive net.
+        payers.push({ id, net });
+      } else {
+        // They owe: their share = |net|
+        shares[id] = Math.round(Math.abs(net) * 100) / 100;
+      }
+    }
+
+    // If no explicit payer found (all nets are negative due to rounding or partial mapping),
+    // skip this row
+    if (payers.length === 0) { skipped++; continue; }
+
+    // Compute payer amounts: proportional to their positive net
+    const totalPayerNet = payers.reduce((s, p) => s + p.net, 0);
+    // Total debtor shares might not sum to full cost (some members skipped)
+    // We assign payers: each payer paid totalDebtorShares * (their net / totalPayerNet)
+    const totalDebtorShares = Object.values(shares).reduce((s, v) => s + v, 0);
+    // If debtors' shares don't cover the cost, the payers absorb their own shares too
+    // Payer's own share = (cost - totalDebtorShares) * (payer.net / totalPayerNet) — but this can be
+    // negative if totalDebtorShares > cost (rounding). Clamp to 0.
+    // Actually simpler: payers paid the full cost, each proportionally to their net surplus
+    const computedPayerAmounts = payers.map(p => ({
+      id: p.id,
+      amount: Math.round(exp.cost * (p.net / totalPayerNet) * 100) / 100
+    }));
+
+    // Payers also have their own share of the expense (= their positive net means they contributed
+    // more, so their share = their payment - their net surplus)
+    // Add payer's own share to shares object
+    for (const p of payers) {
+      const payerPayment = exp.cost * (p.net / totalPayerNet);
+      const payerShare = payerPayment - p.net;
+      if (payerShare > 0.005) {
+        shares[p.id] = Math.round(payerShare * 100) / 100;
+      }
+    }
+
+    const splitAmong = Object.keys(shares).filter(id => shares[id] > 0.005);
+    if (splitAmong.length === 0) { skipped++; continue; }
+
+    const txn = {
+      id: uid(),
+      kind: 'split',
+      groupId: viewingGroupId,
+      amount: exp.cost,
+      date: exp.date,
+      note: exp.description + (exp.category && exp.category !== 'General' ? ` [${exp.category}]` : ''),
+      payers: computedPayerAmounts,
+      paidById: computedPayerAmounts[0].id, // legacy compat
+      splitAmong,
+      splitMode: 'custom',
+      rawSplitMode: 'custom',
+      shares,
+      importedFrom: 'splitwise',
+      createdAt: Date.now()
+    };
+
+    transactions.unshift(txn);
+    imported++;
+  }
+
+  scheduleSave(); render();
+  closeModal();
+  const newPplMsg = typeof newPeopleCreated !== 'undefined' && newPeopleCreated.length > 0 ? ` · ${newPeopleCreated.length} naye log add hue` : '';
+  showToast(`✅ ${imported} expenses import ho gaye${skipped > 0 ? `, ${skipped} skip` : ''}${newPllMsg || newPeopleCreated?.length ? newPplMsg : ''}`);
+};
+
+// =====================================================================
+// ===== GROUP CSV EXPORT =====
+// =====================================================================
+
+window.exportGroupCSV = function() {
+  const g = getGroup(viewingGroupId); if (!g) return;
+  const txns = txnsForGroup(g.id);
+
+  // Build participant list: me + all members
+  const participants = ['me', ...g.memberIds];
+  const participantName = id => id === 'me' ? 'Aap' : (getPerson(id)?.name || id);
+
+  // Header row
+  const headers = ['Date', 'Description', 'Category', 'Cost', 'Currency', ...participants.map(participantName)];
+
+  const rows = [headers];
+
+  txns.slice().reverse().forEach(rawT => {
+    const t = normaliseSplit(rawT);
+    const among = t.splitAmong || [];
+    const total = t.amount;
+
+    // Get final shares
+    let finalShares;
+    if (!t.shares) {
+      finalShares = computeShares('equal', {}, among, total);
+    } else {
+      finalShares = t.shares;
+    }
+
+    // Build payer map
+    const payerMap = {};
+    (t.payers || []).forEach(p => { payerMap[p.id] = p.amount; });
+
+    // Net per participant: payment - share (positive = owed, negative = owes)
+    const row = [
+      t.date,
+      t.note || 'Kharcha',
+      t.rawSplitMode || t.splitMode || 'split',
+      t.amount.toFixed(2),
+      'INR',
+      ...participants.map(id => {
+        const paid = payerMap[id] || 0;
+        const share = finalShares[id] || 0;
+        const net = paid - share;
+        return net === 0 ? '0.00' : net.toFixed(2);
+      })
+    ];
+    rows.push(row);
+  });
+
+  // Total balance row
+  const totals = participants.map(id => {
+    let net = 0;
+    txns.forEach(rawT => {
+      const t = normaliseSplit(rawT);
+      const among = t.splitAmong || [];
+      const total = t.amount;
+      let finalShares = t.shares || computeShares('equal', {}, among, total);
+      const payerMap = {};
+      (t.payers || []).forEach(p => { payerMap[p.id] = p.amount; });
+      net += (payerMap[id] || 0) - (finalShares[id] || 0);
+    });
+    return net === 0 ? '0.00' : net.toFixed(2);
+  });
+  rows.push(['', 'Total balance', '', '', 'INR', ...totals]);
+
+  // Convert to CSV string
+  const csvStr = rows.map(row =>
+    row.map(cell => {
+      const s = String(cell);
+      return s.includes(',') || s.includes('"') || s.includes('\n')
+        ? `"${s.replace(/"/g, '""')}"` : s;
+    }).join(',')
+  ).join('\n');
+
+  const blob = new Blob([csvStr], { type: 'text/csv;charset=utf-8;' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `${g.name.replace(/[^a-z0-9]/gi,'_')}_${todayStr()}_export.csv`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+  showToast(L('csvExported'));
+};
 </script>
 </body>
 </html>
